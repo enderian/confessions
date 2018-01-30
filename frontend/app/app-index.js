@@ -24,6 +24,9 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
         .when('/privacy', {
             templateUrl: 'route/privacy.html'
         })
+        .when('/opensource', {
+            templateUrl: 'route/opensource.html'
+        })
         .when('/help', {
             templateUrl: 'route/help.html'
         })

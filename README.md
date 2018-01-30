@@ -19,6 +19,7 @@ You can find the respected licenses on each of these project's website.
 Running confessions
 ---
 This project was not created with running in mind, so prepare yourself for some heavy configuration before getting it to actually work!
+So if you are determined, *brace thyself!*
 
 To start running confessions, you will need:
 * A running MongoDB instance locally on your machine.
@@ -29,6 +30,7 @@ To start running confessions, you will need:
   * Make sure you have NodeJS and NPM installed.
   * Do `npm install` to download the nessesarry dependencies.
   * Finally, do `npm run build` to run webpack and compile the JS and CSS.
+* *You can now setup all of the above by executing the `install.sh` script.*
 * Configure the `GOPATH` and `GOROOT` environment variables.
 
 After all of these requirements are met, you can do:
