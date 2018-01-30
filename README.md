@@ -36,4 +36,10 @@ After all of these requirements are met, you can do:
 go build ender.gr/confessions
 ./confessions
 ```
+Or to make it more simple, you can run:
+```bash
+chmod u+x start.sh
+./start.sh #or
+./start.sh --skip-webpack #to skip building webpack
+```
 And that's it! You should now have an operational confessions instance online!

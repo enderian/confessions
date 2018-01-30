@@ -1,11 +1,11 @@
 #!/bin/bash
 
 git pull
-if [ "nowp" != "$1" ]
+if [ "--skip-webpack" != "$1" ]
 then
     echo "Building webpack..."
-    webpack
+    npm run build
 fi
 export GOPATH=$GOPATH:$(pwd)
-go build github.com/enderian/confessions-go/
-./confessions-go
+go build ender.gr/confessions
+./confessions
