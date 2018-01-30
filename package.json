@@ -1,0 +1,38 @@
+{
+  "name": "confessions-client",
+  "version": "1.0.0",
+  "description": "",
+  "dependencies": {
+    "angular": "^1.6.5",
+    "angular-file-upload": "^2.5.0",
+    "angular-recaptcha": "^4.1.0",
+    "angular-route": "^1.6.5",
+    "angular-sanitize": "^1.6.5",
+    "bootstrap": "^4.0.0-beta",
+    "font-awesome": "^4.7.0",
+    "jquery": "^3.2.1",
+    "ng-file-upload": "^12.2.13",
+    "popper.js": "^1.11.0",
+    "toastr": "^2.1.2",
+    "underscore": "^1.8.3",
+    "universal-ga": "^1.1.0",
+    "webpack": "^3.5.6"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "css-loader": "^0.28.7",
+    "extract-text-webpack-plugin": "^3.0.0",
+    "file-loader": "^0.11.2",
+    "less": "^2.7.2",
+    "less-loader": "^4.0.5",
+    "node-sass": "^4.5.3",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.18.2",
+    "uglifyjs-webpack-plugin": "^0.4.6",
+    "url-loader": "^0.5.9"
+  },
+  "bundledDependencies": [
+    "bootstrap"
+  ]
+}

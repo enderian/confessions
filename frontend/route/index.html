@@ -1,0 +1,62 @@
+<div class="jumbotron jumbotron-fluid">
+    <div class="container text-center">
+        <h3 class="display-4">ender<span class="text-muted">.gr</span> confessions</h3>
+        <p class="lead">Από το πληκτρολόγιό σου στην αγαπημένη σου σελίδα με ένα κλικ!</p>
+    </div>
+</div>
+<div class="container">
+    <p class="lead text-center">
+        Το ender<span class="text-muted">.gr</span> confessions είναι η εφαρμογή που χρησιμοποιούν σελίδες όπως το Φιλοσοφικό Απόρρητο για να μεταφέρουν με ταχύτητα και
+        αξιοπιστία τα μυστικά/ανομολόγητα/εξομολογήσεις σας από τη φόρμα στη σελίδα τους στο Facebook.
+    </p>
+</div>
+<div class="container mt-4 p-md-3">
+    <div class="text-center">
+        <h3 class="text-muted">Πώς λειτουργεί η εφαρμογή:</h3>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-4 text-center">
+            <img class="img-fluid img-thumbnail" height="100" src="/asset/step1.png" alt="Step1">
+            <h5 class="m-3"><b>1:</b> Στέλνεις το μυστικό σου.</h5>
+        </div>
+        <div class="col-md-4 text-center">
+            <img class="img-fluid img-thumbnail" height="100" src="/asset/step2.png" alt="Step2">
+            <h5 class="m-3"><b>2:</b> Ο διαχειριστής το εγκρίνει.</h5>
+        </div>
+        <div class="col-md-4 text-center">
+            <img class="img-fluid img-thumbnail" height="100" src="/asset/step3.png" alt="Step3">
+            <h5 class="m-3"><b>3:</b> Και να το στη σελίδα!</h5>
+        </div>
+    </div>
+</div>
+<div class="container mt-4 mb-4">
+    <p class="lead text-center">
+        Κάνοντας πολύ γρήγορη τη διαδικασία κοινοποίησης των μυστικών η εφαρμογή επιτρέπει στους διαχειριστές των σελίδων να ασχολούνται με πιο ουσιαστικά πράγματα, όπως
+        το σωστό φιλτράρισμα του περιεχομένου και την ανάπτυξη της σελίδας τους, παρά με το συνεχές copy paste των μυστικών σας!
+    </p>
+</div>
+<div class="jumbotron jumbotron-fluid mt-4">
+    <div class="container">
+        <div class="text-center">
+            <h3>Ήδη μας εμπιστεύονται οι εξής:</h3>
+        </div>
+        <div class="row justify-content-center" ng-controller="ClientController">
+            <div class="col-md-2 text-center" ng-repeat="client in clients">
+                <a ng-href="https://www.facebook.com/{{client.fid}}" target="_blank">
+                    <img class="page-icon" ng-src="https://graph.facebook.com/{{client.fid}}/picture?type=large&height=100">
+                </a>
+                <h4>{{client.name}}</h4>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container mt-4 mb-4">
+    <p class="lead text-center">
+        Είσαι και εσύ διαχειριστής σελίδας ανομολόγητων και πιστεύεις ότι η ομάδα σου μπορεί να επωφεληθεί από την εφαρμογή μας;
+        Επικοινώνησε μαζί μας για να μάθεις πώς μπορείς να γίνεις μέλος!
+    </p>
+    <p class="text-center">
+        <a href="mailto:webmaster@ender.gr" class="btn btn-primary btn-lg">Στείλε μας ένα email</a><br />
+        <span class="text-muted mt-1">webmaster@ender.gr</span>
+    </p>
+</div>

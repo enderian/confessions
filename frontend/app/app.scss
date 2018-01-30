@@ -1,0 +1,28 @@
+@import "~bootstrap/scss/bootstrap";
+@import "~toastr/toastr";
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
+}
+.custom-select {
+  background: none !important;
+}
+.jumbotron {
+  padding: 1rem 1rem;
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.50);
+}
+
+.fb-page-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.fb-page-link:hover {
+  color: inherit;
+  text-decoration: underline;
+}

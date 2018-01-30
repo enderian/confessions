@@ -1,0 +1,9 @@
+.idea
+*.iml
+images
+confessions-go.*
+dist
+node_modules
+bin
+pkg
+config.json
