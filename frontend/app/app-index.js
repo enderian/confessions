@@ -2,7 +2,6 @@ import 'angular/angular';
 import 'angular-route/angular-route';
 import 'jquery';
 import 'bootstrap';
-import 'font-awesome/css/font-awesome.min.css';
 import './app-index.scss'
 import clients from './carriers.json'
 
