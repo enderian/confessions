@@ -26,7 +26,4 @@ $(function () {
         });
         return false
     };
-    document.submitSecret = function () {
-        document.getElementById("secret_form").submit();
-    }
 });
