@@ -17,8 +17,10 @@ func StatusRead(ctx *fasthttp.RequestCtx) {
 	}
 	if string(request.Peek("action")) == "delete" {
 		secret.Status = model.DELETED
-		secret.Save()
 	}
+
+	secret.ChecksData = append(secret.ChecksData, ConstructSourceData(ctx))
+	secret.Save()
 
 	StatusRender(ctx, secret)
 }

@@ -7,6 +7,7 @@ import (
 	"strings"
 	"io/ioutil"
 	"net"
+	"time"
 )
 
 func SecretSubmit(ctx *fasthttp.RequestCtx) {
@@ -113,6 +114,7 @@ func ConstructSourceData(ctx *fasthttp.RequestCtx) model.SecretSourceData {
 	}
 
 	return model.SecretSourceData{
+		Timestamp: makeTimestamp(),
 		IpAddress: ip,
 		Country: country,
 		Hostname: strings.Trim(hostname, "."),
@@ -127,4 +129,8 @@ func contains(s []string, e string) bool {
 		}
 	}
 	return false
+}
+
+func makeTimestamp() int64 {
+	return time.Now().UnixNano() / int64(time.Millisecond)
 }
