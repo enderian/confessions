@@ -8,15 +8,23 @@
     <link rel="stylesheet" href="/dist/form.bundle.css"/>
     <link rel="stylesheet" href="/asset/font-awesome/css/fa-svg-with-js.css">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta property="og:title" content="{{ form.Title }}" />
+    <meta property="og:description" content="{{ form.Subtitle }}" />
+    <meta property="og:url" content="https://confessions.ender.gr/{{ carrier }}" />
+    <meta property="og:type" content="website" />
+    <meta property="fb:app_id" content="1810293349188163" />
+    <meta property="og:image" content="{{ form.LogoUrl | default('https://confessions.ender.gr/assets/ender-confessions-opengraph.png') }}" />
     <script src="/asset/font-awesome/js/fontawesome-all.min.js" async></script>
     <script>
         function submitSecret() {
             document.getElementById("secret_form").submit();
         }
     </script>
-    <script src='https://www.google.com/recaptcha/api.js'></script>
+    {% if form.IsEnableCaptcha %}
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+    {% endif %}
 </head>
-<body>
+<body style="background: url('{{ form.BackgroundUrl }}')">
 <div id="form">
     <div class="jumbotron mt-4 mb-4">
         <div class="text-center pt-2" style="color: {{ form.TitleColor }}">
@@ -33,7 +41,7 @@
     <div class="container mb-4">
         <div class="row justify-content-center">
             {% if success %}
-                <div class="col-lg-6 col-md-9" ng-if="secret_id">
+                <div class="col-lg-6 col-md-9">
                     <div class="card p-4">
                         <div class="card-block">
                             <p class="text-center">
@@ -63,7 +71,7 @@
                                 </div>
                             {% endif %}
                             {% if error %}
-                                <div ng-if="error" class="alert alert-danger mb-2 m-4">{{error}}</div>
+                                <div class="alert alert-danger mb-2 m-4">{{error}}</div>
                             {% endif %}
                             <form id="secret_form" class="m-4" method="post" enctype="multipart/form-data" action="/submit">
                                 <input type="hidden" name="carrier" value="{{ carrier }}">
