@@ -37,6 +37,7 @@ func RenderForm(ctx *fasthttp.RequestCtx, carrier model.Carrier, error string, s
 		"carrier": carrier.Id,
 		"carrierFacebook": carrier.FacebookPage,
 		"form": carrier.Form,
+		"recaptcha": ReCaptchaSiteKey,
 	}
 	if error != "" {
 		values["error"] = error

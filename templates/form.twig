@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/asset/font-awesome/css/fa-svg-with-js.css">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <script src="/asset/font-awesome/js/fontawesome-all.min.js" async></script>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
 </head>
 <body>
 <div id="form">
@@ -59,7 +60,7 @@
                             {% if error %}
                                 <div ng-if="error" class="alert alert-danger mb-2 m-4">{{error}}</div>
                             {% endif %}
-                            <form class="m-4" method="post" enctype="multipart/form-data" action="/submit">
+                            <form id="secret_form" class="m-4" method="post" enctype="multipart/form-data" action="/submit">
                                 <input type="hidden" name="carrier" value="{{ carrier }}">
                                 <div class="form-group">
                                     <label for="message">{{form.SecretPrompt}}</label>
@@ -95,7 +96,7 @@
                                     </div>
                                 {% endif %}
                                 <button class="g-recaptcha btn btn-primary"
-                                        data-sitekey="6LcjpDMUAAAAAMNT5ZFjbCpm_pXf1mDiSU8pJHAd"
+                                        data-sitekey="{{ recaptcha }}"
                                         data-callback="submitSecret">
                                     {{ form.SubmitPrompt }}
                                 </button>

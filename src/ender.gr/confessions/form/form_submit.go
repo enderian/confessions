@@ -25,6 +25,11 @@ func SecretSubmit(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
+	if len(mult_form.Value["g-recaptcha-response"]) == 0 || !VerifyReCaptcha(mult_form.Value["g-recaptcha-response"][0]) {
+		RenderForm(ctx, carrier, "Δεν ολοκληρώσατε την πρόκληση Captcha!", "")
+		return
+	}
+
 	has_content := len(mult_form.Value["content"]) > 0 && mult_form.Value["content"][0] != ""
 	has_image := len(mult_form.File["image"]) > 0 && mult_form.File["image"] != nil
 

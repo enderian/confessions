@@ -26,6 +26,8 @@ To start running confessions, you will need:
 * A `config.js` file containing the following parameters:
   * `port`, containing the host and port to run confessions on (for example: `":8080"`)
   * `confessions_images`, containing the directory to store all images into.
+  * `recaptcha_key`, which is the site's ReCaptcha key, and: 
+  * `recaptcha_secret`, for verifying ReCaptcha requests.
 * You need to have compiled the JavaScript and CSS:
   * Make sure you have NodeJS and NPM installed.
   * Do `npm install` to download the nessesarry dependencies.

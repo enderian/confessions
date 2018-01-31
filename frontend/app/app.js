@@ -25,5 +25,8 @@ $(function () {
             $('#status_check_response').html(resp).show()
         });
         return false
+    };
+    document.submitSecret = function () {
+        document.getElementById("secret_form").submit();
     }
 });

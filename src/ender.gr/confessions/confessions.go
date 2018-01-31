@@ -17,6 +17,9 @@ import (
 type Configuration struct {
 	Port string `json:"port"`
 	ConfessionsImages string `json:"confessions_images"`
+
+	ReCaptchaSiteKey string `json:"recaptcha_key"`
+	ReCaptchaSiteSecret string `json:"recaptcha_secret"`
 }
 
 func main() {
@@ -33,6 +36,8 @@ func main() {
 	connect()
 	router := fasthttprouter.New()
 
+	form.ReCaptchaSiteKey = config.ReCaptchaSiteKey
+	form.ReCaptchaSiteSecret = config.ReCaptchaSiteSecret
 	form.ImageDirectory = config.ConfessionsImages
 	router.POST("/secret", form.StatusRead)
 	router.POST("/submit", form.SecretSubmit)
