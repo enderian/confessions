@@ -32,7 +32,7 @@ func StatusRender(ctx *fasthttp.RequestCtx, secret model.Secret)  {
 
 	published := ""
 	if secret.Status == model.PUBLISHED {
-		carrier, err := model.FindCarrier(secret.Id)
+		carrier, err := model.FindCarrier(secret.Carrier)
 		if err == nil {
 			published = "https://www.facebook.com/" + carrier.FacebookPage + "/posts/" + secret.PublishData.FacebookPostId
 		}
