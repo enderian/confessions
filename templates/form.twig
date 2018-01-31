@@ -13,7 +13,13 @@
     <meta property="og:url" content="https://confessions.ender.gr/{{ carrier }}" />
     <meta property="og:type" content="website" />
     <meta property="fb:app_id" content="1810293349188163" />
-    <meta property="og:image" content="{{ form.LogoUrl | default('https://confessions.ender.gr/assets/ender-confessions-opengraph.png') }}" />
+    {% if form.LogoUrl != "" %}
+        <meta property="og:image" content="{{ form.LogoUrl }}" />
+    {% else %}
+        <meta property="og:image" content="https://confessions.ender.gr/assets/ender-confessions-opengraph.png" />
+    {% endif %}
+    <meta name="Description" CONTENT="{{ form.Subtitle }}">
+    <meta name="robots" content="nosnippet,nofollow,noarchive">
     <script src="/asset/font-awesome/js/fontawesome-all.min.js" async></script>
     <script>
         function submitSecret() {
