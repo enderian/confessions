@@ -3,7 +3,6 @@ package main
 import (
 	"ender.gr/confessions/form"
 	"ender.gr/confessions/model"
-	"fmt"
 	"github.com/valyala/fasthttp"
 	"github.com/buaazp/fasthttprouter"
 	"gopkg.in/mgo.v2"
@@ -12,6 +11,9 @@ import (
 	"io/ioutil"
 	"encoding/json"
 	"time"
+	"log"
+	"os"
+	"io"
 )
 
 type Configuration struct {
@@ -23,14 +25,22 @@ type Configuration struct {
 }
 
 func main() {
-	config := Configuration{}
-	config_file, err := ioutil.ReadFile("config.json")
+
+	logFile, err := os.OpenFile("log.txt", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
 	if err != nil {
-		panic("Unable to open configuration file config.json")
+		log.Fatalf("Error opening log file: %v", err)
 	}
-	err = json.Unmarshal(config_file, &config)
+	mw := io.MultiWriter(os.Stdout, logFile)
+	log.SetOutput(mw)
+
+	config := Configuration{}
+	configFile, err := ioutil.ReadFile("config.json")
 	if err != nil {
-		panic("Unable to open configuration file config.json")
+		log.Fatalf("Unable to open configuration file config.json: %s\n", err.Error())
+	}
+	err = json.Unmarshal(configFile, &config)
+	if err != nil {
+		log.Fatalf("Unable to open configuration file config.json: %s\n", err.Error())
 	}
 
 	connect()
@@ -56,7 +66,7 @@ func main() {
 
 func registerCarriers(router *fasthttprouter.Router) {
 
-	registered := []string{}
+	var registered []string
 	for {
 		for _, k := range model.FindCarriers() {
 			for _, b := range registered {
@@ -65,10 +75,10 @@ func registerCarriers(router *fasthttprouter.Router) {
 				}
 			}
 			registered = append(registered, k.Id)
-			router.GET("/" + k.Id, form.FormCarrier)
+			router.GET("/" + k.Id, form.CarrierForm)
 			router.GET("/" + k.Id + "/css", form.FormCarrierCss)
 
-			fmt.Println("Registered " + k.Id + " as available carrier.")
+			log.Println("Registered " + k.Id + " as an available carrier.")
 			Skip:
 		}
 
@@ -127,10 +137,10 @@ func connect() {
 }
 
 func start(router *fasthttprouter.Router, port string) {
-	fmt.Printf("ender confessions running on %s\n", port)
+	log.Fatalf("ender confessions running on %s\n", port)
 
 	err := fasthttp.ListenAndServe(port, router.Handler)
 	if err != nil {
-		fmt.Printf("confessions could not start!\nError: %s\n", err.Error())
+		log.Fatalf("confessions could not start!\nError: %s\n", err.Error())
 	}
 }

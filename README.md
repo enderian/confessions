@@ -32,7 +32,7 @@ To start running confessions, you will need:
   * Make sure you have NodeJS and NPM installed.
   * Do `npm install` to download the nessesarry dependencies.
   * Finally, do `npm run build` to run webpack and compile the JS and CSS.
-* *You can now setup all of the above by executing the `install.sh` script.*
+* With the [dep](https://golang.github.io/dep/) tool, make sure all dependencies are available by doing `dep ensure` whilst in the `src/ender.gr/confessions` directory.
 * Configure the `GOPATH` and `GOROOT` environment variables.
 
 After all of these requirements are met, you can do:

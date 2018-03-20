@@ -6,6 +6,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 	"fmt"
 	"strings"
+	"log"
 )
 
 var CarrierCollection *mgo.Collection
@@ -76,7 +77,7 @@ func FindCarrier(id string) (Carrier, error) {
 	var carrier Carrier
 	err := CarrierCollection.Find(bson.M{"id": id}).One(&carrier)
 	if err != nil {
-		return Carrier{}, errors.New("Carrier could not be found!")
+		return Carrier{}, errors.New("carrier could not be found")
 	} else {
 		return carrier, nil
 	}
@@ -107,6 +108,6 @@ func (carrier Carrier) IsBoostedHost(ip string, hostname string) (bool, string) 
 func (carrier Carrier) Save() {
 	_, err := CarrierCollection.Upsert(bson.M{"id": carrier.Id}, bson.M{"$set": carrier})
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Fatal(err.Error())
 	}
 }

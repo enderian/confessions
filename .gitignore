@@ -1,9 +1,8 @@
 .idea
 *.iml
-images
 confessions-go.*
 dist
 node_modules
-bin
+vendor
 pkg
 config.json

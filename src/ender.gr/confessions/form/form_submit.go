@@ -8,18 +8,19 @@ import (
 	"io/ioutil"
 	"net"
 	"time"
+	"gopkg.in/h2non/filetype.v1"
 )
 
 func SecretSubmit(ctx *fasthttp.RequestCtx) {
 
-	mult_form, err := ctx.Request.MultipartForm()
+	multForm, err := ctx.Request.MultipartForm()
 	if err != nil {
 		ctx.SetStatusCode(400)
 		ctx.Response.SetBody([]byte("Σφάλμα κατά την λήψη δεδομένων!"))
 		return
 	}
 
-	carrier, err := model.FindCarrier(mult_form.Value["carrier"][0])
+	carrier, err := model.FindCarrier(multForm.Value["carrier"][0])
 	if err != nil {
 		ctx.SetStatusCode(400)
 		ctx.Response.SetBody([]byte("Άκυρος πάροχος!"))
@@ -27,27 +28,27 @@ func SecretSubmit(ctx *fasthttp.RequestCtx) {
 	}
 
 	if carrier.Form.IsEnableCaptcha {
-		if len(mult_form.Value["g-recaptcha-response"]) == 0 || !VerifyReCaptcha(mult_form.Value["g-recaptcha-response"][0]) {
+		if len(multForm.Value["g-recaptcha-response"]) == 0 || !VerifyReCaptcha(multForm.Value["g-recaptcha-response"][0]) {
 			RenderForm(ctx, carrier, "Δεν ολοκληρώσατε την πρόκληση Captcha!", "")
 			return
 		}
 	}
 
-	has_content := len(mult_form.Value["content"]) > 0 && mult_form.Value["content"][0] != ""
-	has_image := len(mult_form.File["image"]) > 0 && mult_form.File["image"] != nil
+	hasContent := len(multForm.Value["content"]) > 0 && multForm.Value["content"][0] != ""
+	hasImage := len(multForm.File["image"]) > 0 && multForm.File["image"] != nil
 
-	if !has_content && !has_image {
+	if !hasContent && !hasImage {
 		RenderForm(ctx, carrier, "Το μυστικό σας πρέπει να περιέχει ή κείμενο ή εικόνα!", "")
 		return
 	}
 
-	image_id := ""
-	if has_image {
+	imageId := ""
+	if hasImage {
 		//web server is setup to filter large image requests
 
 		uid, err := uuid.NewRandom()
-		filename := strings.Replace(uid.String(), "-", "", -1) + "-" + mult_form.File["image"][0].Filename
-		file, err := mult_form.File["image"][0].Open()
+		filename := strings.Replace(uid.String(), "-", "", -1) + "-" + multForm.File["image"][0].Filename
+		file, err := multForm.File["image"][0].Open()
 
 		if err != nil {
 			RenderForm(ctx, carrier, "Σφάλμα κατά την λήψη δεδομένων!", "")
@@ -55,29 +56,33 @@ func SecretSubmit(ctx *fasthttp.RequestCtx) {
 		}
 
 		bytes, err := ioutil.ReadAll(file)
+		if !filetype.IsImage(bytes) {
+			RenderForm(ctx, carrier, "Το αρχείο δεν ήταν έγκυρη εικόνα!", "")
+			return
+		}
 		ioutil.WriteFile(ImageDirectory + filename, bytes, 0755)
-		image_id = filename
+		imageId = filename
 	}
 
 	uid, err := uuid.NewRandom()
-	id_runes := []rune(strings.Replace(uid.String(), "-", "", -1))
-	id := string(id_runes[0:12])
+	idRunes := []rune(strings.Replace(uid.String(), "-", "", -1))
+	id := string(idRunes[0:12])
 	source := ConstructSourceData(ctx)
 
 	content := ""
-	if has_content {
-		content = strings.Trim(mult_form.Value["content"][0], " \n")
+	if hasContent {
+		content = strings.Trim(multForm.Value["content"][0], " \n")
 	}
 
-	var options map[string]string = make(map[string]string)
+	var options = make(map[string]string)
 	for k, v := range carrier.Form.OptionSets {
-		if len(mult_form.Value["option-" + k]) > 0 && mult_form.Value["option-" + k][0] != "" {
+		if len(multForm.Value["option-" + k]) > 0 && multForm.Value["option-" + k][0] != "" {
 
-			input := mult_form.Value["option-" + k][0]
+			input := multForm.Value["option-" + k][0]
 			if input == "custom" && v.AllowCustom {
-				if len(mult_form.Value["option-" + k + "-custom"]) > 0 &&
-					mult_form.Value["option-" + k + "-custom"][0] != "" {
-					options[k] = mult_form.Value["option-"+k+"-custom"][0]
+				if len(multForm.Value["option-" + k + "-custom"]) > 0 &&
+					multForm.Value["option-" + k + "-custom"][0] != "" {
+					options[k] = multForm.Value["option-"+k+"-custom"][0]
 				}
 			}
 			if contains(v.Options, input) {
@@ -97,8 +102,8 @@ func SecretSubmit(ctx *fasthttp.RequestCtx) {
 		Status:     model.SENT,
 		Content:    content,
 		SourceData: source,
-		ImageId:    image_id,
-		Options: 	options,
+		ImageId:    imageId,
+		Options:    options,
 	}
 	secret.Save()
 	RenderForm(ctx, carrier, "", secret.Id)

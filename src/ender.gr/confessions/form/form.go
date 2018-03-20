@@ -5,13 +5,13 @@ import (
 	"github.com/valyala/fasthttp"
 	"io/ioutil"
 	"strings"
-	"fmt"
 	"github.com/tyler-sommer/stick"
+	"fmt"
 )
 
 var ImageDirectory string
 
-func FormCarrier(ctx *fasthttp.RequestCtx)  {
+func CarrierForm(ctx *fasthttp.RequestCtx)  {
 	path := string(ctx.Path())[1:]
 	carrier, err := model.FindCarrier(path)
 	if err != nil {
