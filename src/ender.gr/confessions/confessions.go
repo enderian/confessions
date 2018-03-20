@@ -137,7 +137,7 @@ func connect() {
 }
 
 func start(router *fasthttprouter.Router, port string) {
-	log.Fatalf("ender confessions running on %s\n", port)
+	log.Printf("ender confessions running on %s\n", port)
 
 	err := fasthttp.ListenAndServe(port, router.Handler)
 	if err != nil {
