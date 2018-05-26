@@ -47,9 +47,9 @@ func RenderForm(ctx *fasthttp.RequestCtx, carrier model.Carrier, error string, s
 		c, err := colorful.Hex(carrier.Form.AccentColor)
 		if err == nil {
 			customStyle += ".form-jumbotron {background: rgba(" +
-				strconv.Itoa(int(c.R)) + "," +
-				strconv.Itoa(int(c.G)) + "," +
-				strconv.Itoa(int(c.B)) + "," +
+				strconv.Itoa(int(c.R * 255)) + "," +
+				strconv.Itoa(int(c.G * 255)) + "," +
+				strconv.Itoa(int(c.B * 255)) + "," +
 				" 0.60) !important;}"
 		}
 	}
