@@ -4,6 +4,8 @@ import (
 	"ender.gr/confessions/model"
 	"github.com/valyala/fasthttp"
 	"html/template"
+	"github.com/lucasb-eyer/go-colorful"
+	"strconv"
 )
 
 var ImageDirectory string
@@ -34,12 +36,21 @@ func SetupForm() {
 }
 
 func RenderForm(ctx *fasthttp.RequestCtx, carrier model.Carrier, error string, success interface{})  {
-
+	barColor := ""
 	customStyle := "body{ background: url('" + carrier.Form.BackgroundUrl + "') center; " +
 		"background-size: cover; background-repeat: no-repeat; } " +
 		".jumbotron {color: " + carrier.Form.TitleColor + ";} "
+
 	if carrier.Form.AccentColor != "" {
-		customStyle += ".form-jumbotron {background: rgba(" + carrier.Form.AccentColor + ", 0.60);}"
+		barColor = carrier.Form.AccentColor
+		c, err := colorful.Hex(carrier.Form.AccentColor)
+		if err != nil {
+			customStyle += ".form-jumbotron {background: rgba(" +
+				strconv.Itoa(int(c.R)) + "," +
+				strconv.Itoa(int(c.G)) + "," +
+				strconv.Itoa(int(c.B)) + "," +
+				" 0.60);}"
+		}
 	}
 	if carrier.Form.CustomCss != "" {
 		customStyle += carrier.Form.CustomCss
@@ -49,6 +60,7 @@ func RenderForm(ctx *fasthttp.RequestCtx, carrier model.Carrier, error string, s
 	if err := formTemplate.Execute(ctx, map[string]interface{}{
 		"Carrier": carrier,
 		"Title": carrier.Name,
+		"BarColor": barColor,
 		"Icon": "https://graph.facebook.com/" + carrier.FacebookPage + "/picture?type=square",
 		"RecaptchaKey": ReCaptchaSiteKey,
 		"CustomStyle": template.CSS(customStyle),
