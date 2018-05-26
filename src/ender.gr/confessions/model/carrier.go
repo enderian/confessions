@@ -35,8 +35,10 @@ type CarrierForm struct {
 	SubmitPrompt string `bson:"submitPrompt" json:"submitPrompt"`
 	SentMessage string `bson:"sentMessage" json:"sentMessage"`
 	BackgroundUrl string `bson:"backgroundUrl" json:"backgroundUrl"`
-	TitleColor string `bson:"titleColor" json:"titleColor"`
 	CustomCss string `bson:"customCss" json:"customCss"`
+
+	AccentColor string `bson:"accentColor" json:"-"`
+	TitleColor string `bson:"titleColor" json:"titleColor"`
 
 	OptionSets map[string]CarrierOptions `bson:"optionSets" json:"optionSets"`
 

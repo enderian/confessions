@@ -27,15 +27,13 @@ func CarrierForm(ctx *fasthttp.RequestCtx)  {
 }
 
 func SetupForm() {
-
-}
-
-func RenderForm(ctx *fasthttp.RequestCtx, carrier model.Carrier, error string, success interface{})  {
-	formTemplate := template.Must(template.New("template.html"), nil)
+	formTemplate = template.Must(template.New("template.html"), nil)
 	if _, err := formTemplate.ParseFiles("templates/form.html", "templates/template.html"); err != nil {
 		panic(err)
 	}
+}
 
+func RenderForm(ctx *fasthttp.RequestCtx, carrier model.Carrier, error string, success interface{})  {
 	customStyle := "body{ background: url('" + carrier.Form.BackgroundUrl + "') center; " +
 		"background-size: cover; background-repeat: no-repeat; } " +
 		".jumbotron {color: " + carrier.Form.TitleColor + ";} " + carrier.Form.CustomCss
