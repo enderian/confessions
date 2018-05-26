@@ -34,11 +34,18 @@ func SetupForm() {
 }
 
 func RenderForm(ctx *fasthttp.RequestCtx, carrier model.Carrier, error string, success interface{})  {
+
 	customStyle := "body{ background: url('" + carrier.Form.BackgroundUrl + "') center; " +
 		"background-size: cover; background-repeat: no-repeat; } " +
-		".jumbotron {color: " + carrier.Form.TitleColor + ";} " + carrier.Form.CustomCss
-	ctx.SetContentType("text/html")
+		".jumbotron {color: " + carrier.Form.TitleColor + ";} "
+	if carrier.Form.AccentColor != "" {
+		customStyle += ".form-jumbotron {background: rgba(" + carrier.Form.AccentColor + ", 0.60);}"
+	}
+	if carrier.Form.CustomCss != "" {
+		customStyle += carrier.Form.CustomCss
+	}
 
+	ctx.SetContentType("text/html")
 	if err := formTemplate.Execute(ctx, map[string]interface{}{
 		"Carrier": carrier,
 		"Title": carrier.Name,
