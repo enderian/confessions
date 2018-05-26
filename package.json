@@ -3,12 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "dependencies": {
-    "@fortawesome/fontawesome": "^1.1.8",
-    "@fortawesome/fontawesome-free-brands": "^5.0.13",
-    "@fortawesome/fontawesome-free-solid": "^5.0.13",
-    "@fortawesome/fontawesome-pro-light": "^5.0.13",
-    "@fortawesome/fontawesome-pro-regular": "^5.0.13",
-    "@fortawesome/fontawesome-pro-solid": "^5.0.13",
     "angular": "^1.6.5",
     "angular-recaptcha": "^4.1.5",
     "angular-route": "^1.6.5",
