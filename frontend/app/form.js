@@ -21,14 +21,11 @@ app.controller('FormController', ['$scope', 'Upload', 'vcRecaptchaService', func
         }).then(function (resp) {
             $scope.submitted = true;
             $scope.submittedId = resp.data.id;
+            $scope.uploader = {};
+            $scope.form = {};
         }, function (resp) {
             console.log('Error status: ' + resp.status);
         });
-    };
-
-    $scope.upload = function (carrier, file) {
-        console.log(file)
-
     };
 
 }]);
