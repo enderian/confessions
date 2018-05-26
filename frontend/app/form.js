@@ -9,8 +9,10 @@ app.controller('FormController', ['$scope', 'Upload', 'vcRecaptchaService', func
     $scope.uploader = {};
     $scope.form = {};
     $scope.submitted = false;
+    $scope.loading = false;
 
     $scope.submit = function (carrier) {
+        $scope.loading = true;
         Upload.upload({
             url: '/submit',
             data: {
@@ -19,11 +21,13 @@ app.controller('FormController', ['$scope', 'Upload', 'vcRecaptchaService', func
                 'form':     Upload.json($scope.form)
             }
         }).then(function (resp) {
+            $scope.loading = false;
             $scope.submitted = true;
             $scope.submittedId = resp.data.id;
             $scope.uploader = {};
             $scope.form = {};
         }, function (resp) {
+            $scope.loading = false;
             console.log('Error status: ' + resp.status);
         });
     };

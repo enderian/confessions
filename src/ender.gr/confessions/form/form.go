@@ -36,7 +36,8 @@ func RenderForm(ctx *fasthttp.RequestCtx, carrier model.Carrier, error string, s
 		panic(err)
 	}
 
-	customStyle := "body{ background: url('" + carrier.Form.BackgroundUrl + "'); }; .jumbotron{color: " + carrier.Form.TitleColor + ";} "+ carrier.Form.CustomCss
+	customStyle := "body{ background: url('" + carrier.Form.BackgroundUrl + "'); } " +
+		".jumbotron{color: " + carrier.Form.TitleColor + ";} "+ carrier.Form.CustomCss
 	ctx.SetContentType("text/html")
 
 	if err := formTemplate.Execute(ctx, map[string]interface{}{

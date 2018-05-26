@@ -1,7 +1,9 @@
 {{define "content"}}
 <div class="jumbotron jumbotron-fluid form-jumbotron text-center p-4 mt-4">
-    <h3>{{.Carrier.Form.Title}}</h3>
-    <h5>{{.Carrier.Form.Subtitle}}</h5>
+    <div class="container">
+        <h3>{{.Carrier.Form.Title}}</h3>
+        <p class="lead mb-0">{{.Carrier.Form.Subtitle}}</p>
+    </div>
 </div>
 <div class="container-fluid" ng-app="formSubmission">
     <div class="row justify-content-center">
@@ -38,12 +40,12 @@
                     </div>
                     <form ng-if="!submitted" ng-submit="submit('{{ .Carrier.Id }}')" method="post">
                         <div class="form-group">
-                            <textarea class="form-control" id="message" rows="3" ng-model="form.content" placeholder="{{.Carrier.Form.SecretPrompt}}"></textarea>
+                            <textarea class="form-control" id="message" rows="3" ng-model="form.content" placeholder="{{.Carrier.Form.SecretPrompt}}" ng-disabled="loading"></textarea>
                         </div>
                     {{ range $id, $set := .Carrier.Form.OptionSets }}
                         <div class="form-group">
                             <label>{{$set.Name}}</label>
-                            <select class="custom-value d-block w-100 w-100 custom-select" ng-model="form.options['option-{{ $id }}']" title="{{$set.Name}}">
+                            <select class="custom-value d-block w-100 w-100 custom-select" ng-model="form.options['option-{{ $id }}']" title="{{$set.Name}}" ng-disabled="loading">
                                 <option disabled selected>-- Επιλογή --</option>
                             {{ range $option := $set.Options }}
                                 <option value="{{ $option }}">{{ $option }}</option>
@@ -63,10 +65,10 @@
                         <div class="form-group">
                             <label>{{ .Carrier.Form.ImagePrompt }}</label>
                             <div>
-                                <button ngf-select ng-model="uploader.file" ngf-accept="'image/*'" ngf-max-size="2MB" class="btn btn-outline-secondary">
+                                <button ngf-select ng-model="uploader.file" ngf-accept="'image/*'" ngf-max-size="2MB" class="btn btn-outline-secondary" ng-disabled="loading">
                                     <i class="fas fa-upload"></i>
                                 </button>
-                                <button ng-if="uploader.file" type="button" ng-click="$parent.file = null" class="btn btn-danger">
+                                <button ng-if="uploader.file" type="button" ng-click="$parent.file = null" class="btn btn-danger" ng-disabled="loading">
                                     <i class="far fa-times"></i> {{"{{uploader.file.name}}"}}
                                 </button>
                             </div>
@@ -78,7 +80,7 @@
                             <small>Πατώντας <b>{{ .Carrier.Form.SubmitPrompt }}</b>, αποδέχτεστε την <a href="/privacy">πολιτική απορρήτου</a> του confessions και της σελίδας "{{ .Carrier.Name }}", εάν διαθέτει. </small>
                         </div>
                         <div vc-recaptcha ng-model="form.captcha" size="invisible" key="'{{ .RecaptchaKey }}'" required="true"></div>
-                        <button class="btn btn-primary">
+                        <button class="btn btn-primary" ng-disabled="loading">
                         {{ .Carrier.Form.SubmitPrompt }}
                         </button>
                         <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#status_check" disabled>
