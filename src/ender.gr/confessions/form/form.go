@@ -36,6 +36,7 @@ func SetupForm() {
 }
 
 func RenderForm(ctx *fasthttp.RequestCtx, carrier model.Carrier, error string, success interface{})  {
+
 	barColor := ""
 	customStyle := "body{ background: url('" + carrier.Form.BackgroundUrl + "') center; " +
 		"background-size: cover; background-repeat: no-repeat; } " +
@@ -44,12 +45,12 @@ func RenderForm(ctx *fasthttp.RequestCtx, carrier model.Carrier, error string, s
 	if carrier.Form.AccentColor != "" {
 		barColor = carrier.Form.AccentColor
 		c, err := colorful.Hex(carrier.Form.AccentColor)
-		if err != nil {
+		if err == nil {
 			customStyle += ".form-jumbotron {background: rgba(" +
 				strconv.Itoa(int(c.R)) + "," +
 				strconv.Itoa(int(c.G)) + "," +
 				strconv.Itoa(int(c.B)) + "," +
-				" 0.60);}"
+				" 0.60) !important;}"
 		}
 	}
 	if carrier.Form.CustomCss != "" {
