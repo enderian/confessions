@@ -69,13 +69,6 @@
                 <div class="col-lg-6 col-md-9">
                     <div class="card">
                         <div class="card-block">
-                            {% if form.IsBoosted %}
-                                <div class="alert alert-info m-2">
-                                    <span class="mr-1"><i class="fas fa-rocket fa-lg" data-fa-transform="shrink-6" data-fa-mask="fas fa-square"></i></span>
-                                    {{ form.BoostedReason }}<br />
-                                    Η δημοσιέυσή σας θα έχει προτεραιότητα στις δημοσιεύσεις!
-                                </div>
-                            {% endif %}
                             {% if error %}
                                 <div class="alert alert-danger mb-2 m-4">{{error}}</div>
                             {% endif %}

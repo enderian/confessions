@@ -6,6 +6,7 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"strconv"
+	"time"
 )
 
 type SecretStatus string
@@ -28,38 +29,38 @@ type Secret struct {
 	Carrier string `json:"carrier"`
 	Id string `json:"id"`
 	Status SecretStatus `json:"status"`
-	StatusDescription string `bson:"statusDescription" json:"status_description"`
+	StatusDescription string `bson:"statusDescription" json:"statusDescription"`
 
-	PublishData SecretPublishData `bson:"publishData" json:"publish_data"`
-	SourceData SecretSourceData `bson:"sourceData" json:"source_data"`
-	ChecksData []SecretSourceData `bson:"checksData" json:"checks_data"`
+	PublishData SecretPublishData `bson:"publishData" json:"publishData"`
+	SourceData SecretSourceData `bson:"sourceData" json:"sourceData"`
+	ChecksData []SecretSourceData `bson:"checksData" json:"checksData"`
 	Statistics map[string]int64 `bson:"statistics" json:"statistics"`
 
 	Content string `json:"content"`
-	OriginalContent string `json:"original_content"`
-	ImageId string `bson:"imageId" json:"image_id"`
+	OriginalContent string `json:"originalContent"`
+	ImageId string `bson:"imageId" json:"imageId"`
 	Options map[string]string `json:"options"`
 	Boosted bool `json:"boosted"`
 
-	FinalForm string `bson:"-" json:"final_form"`
+	FinalForm string `bson:"-" json:"finalForm"`
 	Properties string `bson:"-" json:"properties"`
 }
 
 type SecretPublishData struct {
-	QueuedTime int64 `bson:"queuedTime" json:"queued_time"`
-	PublishTime int64 `bson:"publishTime" json:"publish_time"`
+	QueuedTime time.Time `bson:"queuedTime" json:"queuedTime"`
+	PublishTime time.Time `bson:"publishTime" json:"publishTime"`
 	Publisher string `bson:"publisher" json:"publisher"`
-	PublishTag string `bson:"publishTag" json:"publish_tag"`
-	FacebookPostId string `bson:"facebookPostId" json:"facebook_post_id"`
+	PublishTag string `bson:"publishTag" json:"publishTag"`
+	FacebookPostId string `bson:"facebookPostId" json:"facebookPostId"`
 }
 
 type SecretSourceData struct {
-	Timestamp int64 `json:"timestamp"`
-	IpAddress string `bson:"ipAddress" json:"ip_address"`
-	IpPort int `bson:"ipPort" json:"ip_port"`
+	Timestamp time.Time `json:"timestamp"`
+	IpAddress string `bson:"ipAddress" json:"ipAddress"`
+	IpPort int `bson:"ipPort" json:"ipPort"`
 	Hostname string `bson:"hostname" json:"hostname"`
 	Country string `bson:"country" json:"country"`
-	RayID string `bson:"rayId" json:"ray_id"`
+	RayID string `bson:"rayId" json:"rayId"`
 }
 
 func FindSecret(id string) (Secret, error) {
@@ -68,7 +69,7 @@ func FindSecret(id string) (Secret, error) {
 	if err != nil {
 		err = SecretArchiveCollection.Find(bson.M{"id": id}).One(&secret)
 		if err != nil {
-			return Secret{}, errors.New("Secret could not be found!")
+			return Secret{}, errors.New("secret could not be found")
 		} else {
 			return secret, nil
 		}

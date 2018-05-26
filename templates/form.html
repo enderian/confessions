@@ -1,0 +1,112 @@
+{{define "content"}}
+<div class="jumbotron jumbotron-fluid text-center p-4 mt-4">
+    <h3>{{.Carrier.Form.Title}}</h3>
+    <h5>{{.Carrier.Form.Subtitle}}</h5>
+</div>
+<div class="container-fluid" ng-app="formSubmission">
+    <div class="row justify-content-center">
+        <div class="ad-card d-none d-xl-block col-12">
+            <ins class="adsbygoogle"
+                 style="display:block;width:300px;height:600px"
+                 data-adtest="on"
+                 data-ad-client="ca-pub-9120953754980939"
+                 data-ad-slot="2072269466"></ins>
+        </div>
+        <div class="form-card col-12">
+            <div class="card">
+                <div class="card-header">
+                    <img class="form-circle-pic mr-1" src="http://graph.facebook.com/{{.Carrier.FacebookPage}}/picture?type=square">
+                    <small>{{ .Carrier.Name }}</small>
+                </div>
+                <div ng-controller="FormController" class="card-body">
+                    <div ng-show="submitted" class="ng-hide">
+                        <p class="text-center">
+                            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"></circle>
+                                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"></path>
+                            </svg>
+                        </p>
+                        <div class="text-center"><p class="mt-2">{{ .Carrier.Form.SentMessage }}</p>
+                            <p> Μπορείς να κρατήσεις το παρακάτω αναγνωριστικό και να διαχειριστείς το μυστικό σου πατώντας
+                                το <i class="fas fa-search" aria-hidden="true"></i> δίπλα στο κουμπί {{ .Carrier.Form.SubmitPrompt }}. </p>
+                            <div class="input-group input-group-lg">
+                                <input class="form-control text-center" placeholder="Αναγνωριστικό μυστικού" value="{{"{{submittedId}}"}}" readonly></div>
+                            <p class="mt-4"><a href="#" ng-click="submitted = false">Επιστροφή στη φόρμα</a></p></div>
+                    </div>
+                    <form ng-if="!submitted" ng-submit="submit('{{ .Carrier.Id }}')" method="post">
+                        <div class="form-group">
+                            <textarea class="form-control" id="message" rows="3" ng-model="form.content" placeholder="{{.Carrier.Form.SecretPrompt}}"></textarea>
+                        </div>
+                    {{ range $id, $set := .Carrier.Form.OptionSets }}
+                        <div class="form-group">
+                            <label>{{$set.Name}}</label>
+                            <select class="custom-value d-block w-100 w-100 custom-select" ng-model="form.options['option-{{ $id }}']" title="{{$set.Name}}">
+                                <option disabled selected>-- Επιλογή --</option>
+                            {{ range $option := $set.Options }}
+                                <option value="{{ $option }}">{{ $option }}</option>
+                            {{ end }}
+                            {{ if $set.AllowCustom }}
+                                <option value="custom">Άλλο</option>
+                            {{ end }}
+                            </select>
+                            <input placeholder="Άλλο"
+                                   class="form-control form-control-sm mt-2"
+                                   ng-if="form.options['option-{{ $id }}'] == 'custom'"
+                                   ng-model="form.options['option-{{ $id }}-custom']"
+                                   style="display: none">
+                        </div>
+                    {{ end }}
+                    {{ if .Carrier.Form.IsAcceptsImage }}
+                        <div class="form-group">
+                            <label>{{ .Carrier.Form.ImagePrompt }}</label>
+                            <div>
+                                <button ngf-select ng-model="uploader.file" ngf-accept="'image/*'" ngf-max-size="2MB" class="btn btn-outline-secondary">
+                                    <i class="fas fa-upload"></i>
+                                </button>
+                                <button ng-if="uploader.file" type="button" ng-click="$parent.file = null" class="btn btn-danger">
+                                    <i class="far fa-times"></i> {{"{{uploader.file.name}}"}}
+                                </button>
+                            </div>
+                            <small class="form-text text-muted" id="post-image-help">Μέγιστο μέγεθος εικόνας 2 MB.
+                            </small>
+                        </div>
+                    {{ end }}
+                        <div class="text-muted mb-2">
+                            <small>Πατώντας <b>{{ .Carrier.Form.SubmitPrompt }}</b>, αποδέχτεστε την <a href="#">πολιτική απορρήτου</a> του confessions και της σελίδας "{{ .Carrier.Name }}", εάν διαθέτει. </small>
+                        </div>
+                        <div vc-recaptcha ng-model="form.captcha" size="invisible" key="'{{ .RecaptchaKey }}'" required="true"></div>
+                        <button class="btn btn-primary">
+                        {{ .Carrier.Form.SubmitPrompt }}
+                        </button>
+                        <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#status_check">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </button>
+                    </form>
+                </div>
+                <div class="card-footer text-muted">
+                    <small><i class="fas fa-copyright" aria-hidden="true"></i> Copyright 2018 - Powered by <a href="/">ender confessions</a></small>
+                </div>
+            </div>
+            <div class="d-block d-xl-none mt-3">
+                <ins class="adsbygoogle"
+                     style="display:block; border-radius: .25rem;"
+                     data-ad-format="fluid"
+                     data-ad-layout-key="-6k+dg+58-2b-89"
+                     data-ad-client="ca-pub-9120953754980939"
+                     data-ad-slot="7224647500"></ins>
+            </div>
+        </div>
+        <div class="ad-card d-none d-xl-block col-12">
+            <ins class="adsbygoogle"
+                 style="display:block;width:300px;height:600px"
+                 data-adtest="on"
+                 data-ad-client="ca-pub-9120953754980939"
+                 data-ad-slot="2072269466"></ins>
+        </div>
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+</div>
+{{end}}

@@ -1,29 +1,20 @@
 import './app.scss'
 import './tick.scss'
+
 import 'bootstrap'
-import $ from 'jquery'
 
-$(function () {
-    $('.custom-value').change(function () {
-        const id = '#' + $(this).attr('name') + '-custom';
-        if ($(this).val() === "custom") {
-            $(id).show();
-        } else {
-            $(id).hide();
-        }
-    });
+import './form'
+import './index'
 
-    $('#status_check_form').submit(function (event) {
-        event.preventDefault();
-        $.post('/secret', $('#status_check_form').serialize(), function(resp){
-            $('#status_check_response').html(resp).show()
-        })
-    });
+import fontawesome from '@fortawesome/fontawesome'
+import faSearch from '@fortawesome/fontawesome-pro-solid/faSearch'
+import faUpload from '@fortawesome/fontawesome-pro-solid/faUpload'
+import faTimes from '@fortawesome/fontawesome-pro-regular/faTimes'
+import faCopyright from '@fortawesome/fontawesome-pro-solid/faCopyright'
+import faPaperPlane from '@fortawesome/fontawesome-pro-solid/faPaperPlane'
+import faCheck from '@fortawesome/fontawesome-pro-solid/faCheck'
+import faFacebook from '@fortawesome/fontawesome-free-brands/faFacebook'
+import faEnvelope from '@fortawesome/fontawesome-pro-solid/faEnvelope'
+import faSignIn from '@fortawesome/fontawesome-pro-solid/faSignIn'
 
-    document.deleteSubmit = function () {
-        $.post('/secret', $('#status_check_delete').serialize(), function(resp){
-            $('#status_check_response').html(resp).show()
-        });
-        return false
-    };
-});
+fontawesome.library.add(faSearch, faUpload, faTimes, faCopyright, faPaperPlane, faCheck, faFacebook, faEnvelope, faSignIn);

@@ -1,0 +1,40 @@
+{{define "content"}}
+<nav class="navbar navbar-light navbar-expand-lg confessions-nav">
+    <a class="navbar-brand" href="#"><img src="/asset/ender-confessions-black.svg" class="d-inline-block align-top mr-2" height="30">confessions</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link {{ .HomePage }}" href="/" >Αρχική</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ .Help }}" href="/help">Γραμμές υποστήριξης</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ .Privacy }}" href="/privacy">Πολιτική απορρήτου</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link {{ .Join }}" href="/join">Γίνετε μέλος!</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="https://admin.ender.gr/confessions" target="_blank"><i class="fas fa-sign-in"></i></a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div ng-app="indexApp">
+    <div id="particles-js"></div>
+{{template "index-content" .}}
+</div>
+<div class="container">
+    <hr />
+    <footer class="text-muted mb-4">
+        <i class="fas fa-copyright" aria-hidden="true"></i> Copyright 2018 -
+        <i class="fas fa-envelope"></i> webmaster@ender.gr
+    </footer>
+</div>
+{{end}}

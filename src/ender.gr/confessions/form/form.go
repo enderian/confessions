@@ -3,13 +3,11 @@ package form
 import (
 	"ender.gr/confessions/model"
 	"github.com/valyala/fasthttp"
-	"io/ioutil"
-	"strings"
-	"github.com/tyler-sommer/stick"
-	"fmt"
+	"html/template"
 )
 
 var ImageDirectory string
+var formTemplate *template.Template
 
 func CarrierForm(ctx *fasthttp.RequestCtx)  {
 	path := string(ctx.Path())[1:]
@@ -28,36 +26,24 @@ func CarrierForm(ctx *fasthttp.RequestCtx)  {
 	}
 }
 
-func RenderForm(ctx *fasthttp.RequestCtx, carrier model.Carrier, error string, success string)  {
-	env := stick.New(nil)
-	file, _ := ioutil.ReadFile("./templates/form.twig")
-	ctx.SetContentType("text/html")
+func SetupForm() {
 
-	values := map[string]stick.Value{
-		"carrier": carrier.Id,
-		"carrierFacebook": carrier.FacebookPage,
-		"form": carrier.Form,
-		"recaptcha": ReCaptchaSiteKey,
-	}
-	if error != "" {
-		values["error"] = error
-	}
-	if success != "" {
-		values["success"] = true
-		values["secretId"] = success
-	}
-
-	env.Execute(string(file), ctx, values)
 }
 
-func FormCarrierCss(ctx *fasthttp.RequestCtx) {
-	path := string(ctx.Path())[1:]
-	carrier, err := model.FindCarrier(path[0:strings.Index(path, "/")])
-	if err != nil {
-		ctx.SetBody([]byte("Η φορμα δεν υπάρχει!"))
-		return
+func RenderForm(ctx *fasthttp.RequestCtx, carrier model.Carrier, error string, success interface{})  {
+	formTemplate := template.Must(template.New("template.html"), nil)
+	if _, err := formTemplate.ParseFiles("templates/form.html", "templates/template.html"); err != nil {
+		panic(err)
 	}
 
-	ctx.SetContentType("text/css")
-	fmt.Fprint(ctx, carrier.Form.CustomCss)
+	customStyle := "body{ background: url('" + carrier.Form.BackgroundUrl + "'); }"
+	ctx.SetContentType("text/html")
+
+	if err := formTemplate.Execute(ctx, map[string]interface{}{
+		"Carrier": carrier,
+		"RecaptchaKey": ReCaptchaSiteKey,
+		"CustomStyle": template.CSS(customStyle),
+	}); err != nil {
+		panic(err)
+	}
 }

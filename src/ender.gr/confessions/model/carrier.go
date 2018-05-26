@@ -4,7 +4,6 @@ import (
 	"errors"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-	"strings"
 	"log"
 )
 
@@ -24,29 +23,25 @@ type Carrier struct {
 	Form CarrierForm
 
 	BoostedHosts map[string]string `bson:"boostedHosts"`
-	Statistics map[string]int64 `bson:"statistics"`
+	Statistics map[string]interface{} `bson:"statistics"`
 }
 
 type CarrierForm struct {
 	Enabled bool `json:"enabled"`
 	Title string `json:"title"`
 	Subtitle string `json:"subtitle"`
-	SecretPrompt string `bson:"secretPrompt" json:"secret_prompt"`
-	ImagePrompt string `bson:"imagePrompt" json:"image_prompt"`
-	SubmitPrompt string `bson:"submitPrompt" json:"submit_prompt"`
-	SentMessage string `bson:"sentMessage" json:"sent_message"`
-	BackgroundUrl string `bson:"backgroundUrl" json:"background_url"`
-	LogoUrl string `bson:"logoUrl" json:"logo_url"`
-	TitleColor string `bson:"titleColor" json:"title_color"`
-	CustomCss string `bson:"customCss" json:"custom_css"`
+	SecretPrompt string `bson:"secretPrompt" json:"secretPrompt"`
+	ImagePrompt string `bson:"imagePrompt" json:"imagePrompt"`
+	SubmitPrompt string `bson:"submitPrompt" json:"submitPrompt"`
+	SentMessage string `bson:"sentMessage" json:"sentMessage"`
+	BackgroundUrl string `bson:"backgroundUrl" json:"backgroundUrl"`
+	TitleColor string `bson:"titleColor" json:"titleColor"`
+	CustomCss string `bson:"customCss" json:"customCss"`
 
-	OptionSets map[string]CarrierOptions `bson:"optionSets" json:"option_sets"`
+	OptionSets map[string]CarrierOptions `bson:"optionSets" json:"optionSets"`
 
-	IsAcceptsImage bool `bson:"isAcceptsImage" json:"is_accepts_image"`
-	IsEnableCaptcha bool `bson:"isEnableCaptcha" json:"is_enable_captcha"`
-
-	IsBoosted bool `bson:"-" json:"is_boosted"`
-	BoostedReason string `bson:"-" json:"boosted_reason"`
+	IsAcceptsImage bool `bson:"isAcceptsImage" json:"acceptsImage"`
+	IsEnableCaptcha bool `bson:"isEnableCaptcha" json:"requiresCaptcha"`
 }
 
 type CarrierFacebookInfo struct {
@@ -58,18 +53,18 @@ type CarrierFacebookInfo struct {
 }
 
 type CarrierFacebookToken struct {
-	AccessToken string `bson:"access_token" json:"access_token"`
-	MachineId string `bson:"machine_id" json:"machine_id"`
-	ExpiresIn int64 `bson:"expires_in" json:"expires_in"`
+	AccessToken string `bson:"access_token" json:"accessToken"`
+	MachineId string `bson:"machine_id" json:"machineId"`
+	ExpiresIn int64 `bson:"expires_in" json:"expiresIn"`
 }
 
 type CarrierOptions struct {
 	Name string `json:"name"`
 	Options []string `json:"options"`
-	OptionDisplay map[string]string `bson:"optionsDisplay" json:"option_display"`
-	AllowCustom bool `bson:"allowCustom" json:"allow_custom"`
+	OptionDisplay map[string]string `bson:"optionsDisplay" json:"optionsDisplay"`
+	AllowCustom bool `bson:"allowCustom" json:"allowCustom"`
 
-	SubmittedValue string `bson:"-" json:"submitted_value"`
+	SubmittedValue string `bson:"-" json:"submittedValue"`
 }
 
 func FindCarrier(id string) (Carrier, error) {
@@ -86,22 +81,6 @@ func FindCarriers() []Carrier {
 	var results []Carrier
 	CarrierCollection.Find(bson.M{}).All(&results)
 	return results
-}
-
-func (carrier Carrier) IsBoostedHost(ip string, hostname string) (bool, string) {
-	for host, reason := range carrier.BoostedHosts {
-		host = strings.Replace(host, "_", ".", -1)
-		if hostname == host || host == ip {
-			return true, reason
-		}
-	}
-	for host, reason := range carrier.BoostedHosts {
-		host = strings.Replace(host, "_", ".", -1)
-		if strings.HasSuffix(hostname, host) {
-			return true, reason
-		}
-	}
-	return false, ""
 }
 
 func (carrier Carrier) Save() {

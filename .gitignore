@@ -1,7 +1,7 @@
 .idea
 *.iml
 confessions-go.*
-dist
+bundle.*
 node_modules
 vendor
 pkg
