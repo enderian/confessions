@@ -71,7 +71,7 @@
                         </div>
                     {{ end }}
                         <div class="text-muted mb-2">
-                            <small>Πατώντας <b>{{ .Carrier.Form.SubmitPrompt }}</b>, αποδέχτεστε την <a href="#">πολιτική απορρήτου</a> του confessions και της σελίδας "{{ .Carrier.Name }}", εάν διαθέτει. </small>
+                            <small>Πατώντας <b>{{ .Carrier.Form.SubmitPrompt }}</b>, αποδέχτεστε την <a href="/privacy">πολιτική απορρήτου</a> του confessions και της σελίδας "{{ .Carrier.Name }}", εάν διαθέτει. </small>
                         </div>
                         <div vc-recaptcha ng-model="form.captcha" size="invisible" key="'{{ .RecaptchaKey }}'" required="true"></div>
                         <button class="btn btn-primary">
