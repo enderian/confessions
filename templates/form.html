@@ -35,7 +35,7 @@
             <div class="card">
                 <div class="card-header">
                     <img class="form-circle-pic mr-1" src="{{.Icon}}">
-                    <small>{{ .Carrier.Name }}</small>
+                    <a href="https://www.facebook.com/{{.Carrier.FacebookPage}}" target="_blank" class="text-dark"><small>{{ .Carrier.Name }}</small></a>
                 </div>
                 <div ng-controller="FormController" class="card-body">
                     <div ng-show="submitted" class="ng-hide">
