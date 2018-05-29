@@ -6,6 +6,5 @@ then
     echo "Building webpack..."
     npm run build
 fi
-export GOPATH=$GOPATH:$(pwd)
 go build github.com/enderian/confessions
 ./confessions
