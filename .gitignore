@@ -1,8 +1,7 @@
+node_modules
+vendor
 .idea
 *.iml
 confessions-go.*
 bundle.*
-node_modules
-vendor
-pkg
 config.json
