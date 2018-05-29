@@ -1,14 +1,6 @@
 package model
 
-import (
-	"errors"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
-	"log"
-)
 
-var CarrierCollection *mgo.Collection
-var CarrierArchiveCollection *mgo.Collection
 
 type Carrier struct {
 	Id string
@@ -67,27 +59,4 @@ type CarrierOptions struct {
 	AllowCustom bool `bson:"allowCustom" json:"allowCustom"`
 
 	SubmittedValue string `bson:"-" json:"submittedValue"`
-}
-
-func FindCarrier(id string) (Carrier, error) {
-	var carrier Carrier
-	err := CarrierCollection.Find(bson.M{"id": id}).One(&carrier)
-	if err != nil {
-		return Carrier{}, errors.New("carrier could not be found")
-	} else {
-		return carrier, nil
-	}
-}
-
-func FindCarriers() []Carrier {
-	var results []Carrier
-	CarrierCollection.Find(bson.M{}).All(&results)
-	return results
-}
-
-func (carrier Carrier) Save() {
-	_, err := CarrierCollection.Upsert(bson.M{"id": carrier.Id}, bson.M{"$set": carrier})
-	if err != nil {
-		log.Fatal(err.Error())
-	}
 }

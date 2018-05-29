@@ -1,11 +1,12 @@
 package form
 
 import (
-	"ender.gr/confessions/model"
+	"github.com/enderian/confessions/model"
 	"github.com/valyala/fasthttp"
 	"html/template"
 	"github.com/lucasb-eyer/go-colorful"
 	"strconv"
+	"github.com/enderian/confessions/database"
 )
 
 var ImageDirectory string
@@ -13,7 +14,7 @@ var formTemplate *template.Template
 
 func CarrierForm(ctx *fasthttp.RequestCtx)  {
 	path := string(ctx.Path())[1:]
-	carrier, err := model.FindCarrier(path)
+	carrier, err := database.FindCarrier(path)
 	if err != nil {
 		ctx.SetBody([]byte("Η φορμα δεν υπάρχει!"))
 		return

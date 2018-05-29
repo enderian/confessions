@@ -2,16 +2,11 @@ package model
 
 import (
 	"strings"
-	"errors"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
 	"strconv"
 	"time"
 )
 
 type SecretStatus string
-var SecretCollection *mgo.Collection
-var SecretArchiveCollection *mgo.Collection
 
 const(
 	SENT SecretStatus = "SENT"
@@ -63,20 +58,7 @@ type SecretSourceData struct {
 	RayID string `bson:"rayId" json:"rayId"`
 }
 
-func FindSecret(id string) (Secret, error) {
-	var secret Secret
-	err := SecretCollection.Find(bson.M{"id": id}).One(&secret)
-	if err != nil {
-		err = SecretArchiveCollection.Find(bson.M{"id": id}).One(&secret)
-		if err != nil {
-			return Secret{}, errors.New("secret could not be found")
-		} else {
-			return secret, nil
-		}
-	} else {
-		return secret, nil
-	}
-}
+
 
 func (secret *Secret) BuildProperties(carrier *Carrier) {
 	secret.Properties = carrier.EffectiveFormat
@@ -137,8 +119,4 @@ func (secret *Secret) BuildProperties(carrier *Carrier) {
 
 	secret.FinalForm = finalForm
 	secret.Properties = strings.Replace(secret.Properties, "{message}", "?", -1)
-}
-
-func (secret Secret) Save() {
-	SecretCollection.Upsert(bson.M{"id": secret.Id}, bson.M{"$set": secret})
 }

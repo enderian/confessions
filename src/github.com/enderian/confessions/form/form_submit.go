@@ -1,7 +1,7 @@
 package form
 
 import (
-	"ender.gr/confessions/model"
+	"github.com/enderian/confessions/model"
 	"github.com/valyala/fasthttp"
 	"github.com/google/uuid"
 	"strings"
@@ -10,6 +10,7 @@ import (
 	"time"
 	"gopkg.in/h2non/filetype.v1"
 	"encoding/json"
+	"github.com/enderian/confessions/database"
 )
 
 func SecretSubmit(ctx *fasthttp.RequestCtx) {
@@ -21,7 +22,7 @@ func SecretSubmit(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	carrier, err := model.FindCarrier(multForm.Value["carrier"][0])
+	carrier, err := database.FindCarrier(multForm.Value["carrier"][0])
 	if err != nil {
 		ctx.SetStatusCode(400)
 		ctx.SetBody(returnError("Άκυρος πάροχος!"))
@@ -116,7 +117,7 @@ func SecretSubmit(ctx *fasthttp.RequestCtx) {
 		ImageId:    imageId,
 		Options:    options,
 	}
-	secret.Save()
+	database.SaveSecret(secret)
 
 	ctx.Write(func() []byte{
 		js, _ := json.Marshal(struct {

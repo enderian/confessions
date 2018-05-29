@@ -1,16 +1,17 @@
 package form
 
 import (
-	"ender.gr/confessions/model"
+	"github.com/enderian/confessions/model"
 	"github.com/valyala/fasthttp"
 	"io/ioutil"
 	"github.com/tyler-sommer/stick"
+	"github.com/enderian/confessions/database"
 )
 
 func StatusRead(ctx *fasthttp.RequestCtx) {
 
 	request := ctx.Request.PostArgs()
-	secret, err := model.FindSecret(string(request.Peek("id")))
+	secret, err := database.FindSecret(string(request.Peek("id")))
 	if err != nil || string(request.Peek("carrier")) != secret.Carrier {
 		StatusRender(ctx, model.Secret{})
 		return
@@ -20,7 +21,7 @@ func StatusRead(ctx *fasthttp.RequestCtx) {
 	}
 
 	secret.ChecksData = append(secret.ChecksData, ConstructSourceData(ctx))
-	secret.Save()
+	database.SaveSecret(secret)
 
 	StatusRender(ctx, secret)
 }
@@ -32,7 +33,7 @@ func StatusRender(ctx *fasthttp.RequestCtx, secret model.Secret)  {
 
 	published := ""
 	if secret.Status == model.PUBLISHED {
-		carrier, err := model.FindCarrier(secret.Carrier)
+		carrier, err := database.FindCarrier(secret.Carrier)
 		if err == nil {
 			published = "https://www.facebook.com/" + carrier.FacebookPage + "/posts/" + secret.PublishData.FacebookPostId
 		}

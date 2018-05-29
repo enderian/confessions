@@ -1,18 +1,17 @@
 package main
 
 import (
-	"ender.gr/confessions/form"
-	"ender.gr/confessions/model"
-	"github.com/valyala/fasthttp"
-	"github.com/buaazp/fasthttprouter"
-	"gopkg.in/mgo.v2"
 	"io/ioutil"
 	"encoding/json"
 	"time"
 	"log"
 	"os"
 	"io"
-	"ender.gr/confessions/index"
+	"github.com/enderian/confessions/form"
+	"github.com/valyala/fasthttp"
+	"github.com/buaazp/fasthttprouter"
+	"github.com/enderian/confessions/index"
+	"github.com/enderian/confessions/database"
 )
 
 type Configuration struct {
@@ -42,7 +41,7 @@ func main() {
 		log.Fatalf("Unable to open configuration file config.json: %s\n", err.Error())
 	}
 
-	connect()
+	database.InitConfessionsDatabase()
 	router := fasthttprouter.New()
 
 	form.ReCaptchaSiteKey = config.ReCaptchaSiteKey
@@ -65,7 +64,7 @@ func registerCarriers(router *fasthttprouter.Router) {
 
 	var registered []string
 	for {
-		for _, k := range model.FindCarriers() {
+		for _, k := range database.FindCarriers() {
 			for _, b := range registered {
 				if b == k.Id {
 					goto Skip
@@ -82,19 +81,7 @@ func registerCarriers(router *fasthttprouter.Router) {
 }
 
 func adminHandler(ctx *fasthttp.RequestCtx) {
-	ctx.Redirect("https://admin.ender.gr/confessions/", 301)
-}
-
-func connect() {
-	session, err := mgo.Dial("localhost")
-	if err != nil {
-		panic(err)
-	}
-	session.SetMode(mgo.Monotonic, true)
-
-	model.CarrierCollection = session.DB("ender-confessions").C("Carrier")
-	model.SecretCollection = session.DB("ender-confessions").C("Secret")
-	model.SecretArchiveCollection = session.DB("ender-confessions").C("SecretArchive")
+	ctx.Redirect("https://admin.github.com/confessions/", 301)
 }
 
 func start(router *fasthttprouter.Router, port string) {
