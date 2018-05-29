@@ -7,5 +7,6 @@ then
     npm install
     npm run build
 fi
+dep ensure
 go build github.com/enderian/confessions
 ./confessions
