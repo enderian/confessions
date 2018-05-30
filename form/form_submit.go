@@ -1,28 +1,29 @@
 package form
 
 import (
-	"github.com/enderian/confessions/model"
-	"github.com/valyala/fasthttp"
-	"github.com/google/uuid"
-	"strings"
-	"io/ioutil"
-	"net"
-	"time"
-	"gopkg.in/h2non/filetype.v1"
 	"encoding/json"
 	"github.com/enderian/confessions/database"
+	"github.com/enderian/confessions/model"
+	"github.com/google/uuid"
+	"github.com/valyala/fasthttp"
+	"gopkg.in/h2non/filetype.v1"
+	"io/ioutil"
+	"net"
+	"strings"
+	"time"
 )
 
 func SecretSubmit(ctx *fasthttp.RequestCtx) {
 
-	multForm, err := ctx.Request.MultipartForm()
+	multiPartForm, err := ctx.Request.MultipartForm()
 	if err != nil {
 		ctx.SetStatusCode(400)
 		ctx.SetBody(returnError("Σφάλμα κατά την λήψη δεδομένων!"))
 		return
 	}
 
-	carrier, err := database.FindCarrier(multForm.Value["carrier"][0])
+	carrierId := string(ctx.Path())[1: strings.Index(string(ctx.Path())[1:], "/") + 1]
+	carrier, err := database.FindCarrier(carrierId)
 	if err != nil {
 		ctx.SetStatusCode(400)
 		ctx.SetBody(returnError("Άκυρος πάροχος!"))
@@ -30,12 +31,12 @@ func SecretSubmit(ctx *fasthttp.RequestCtx) {
 	}
 
 	formData := struct {
-		Content string `json:"content"`
+		Content string            `json:"content"`
 		Options map[string]string `json:"options"`
-		Captcha string `json:"captcha"`
+		Captcha string            `json:"captcha"`
 	}{}
 
-	json.Unmarshal([]byte(multForm.Value["form"][0]), &formData)
+	json.Unmarshal([]byte(multiPartForm.Value["secret"][0]), &formData)
 
 	if carrier.Form.IsEnableCaptcha {
 		if !VerifyReCaptcha(formData.Captcha) {
@@ -46,10 +47,11 @@ func SecretSubmit(ctx *fasthttp.RequestCtx) {
 	}
 
 	hasContent := formData.Content != ""
-	hasImage := len(multForm.File["file"]) > 0 && multForm.File["file"] != nil
+	hasImage := len(multiPartForm.File["file"]) > 0 && multiPartForm.File["file"] != nil
 
 	if !hasContent && !hasImage {
-		ctx.SetBody(returnError("Το μυστικό σας πρέπει να περιέχει ή κείμενο ή εικόνα!"))
+		ctx.SetBody(returnError("Το μυστικό σας πρέπει να περιέχει κείμενο ή εικόνα!"))
+		ctx.SetStatusCode(400)
 		return
 	}
 
@@ -57,8 +59,8 @@ func SecretSubmit(ctx *fasthttp.RequestCtx) {
 	if hasImage {
 
 		uid, err := uuid.NewRandom()
-		filename := strings.Replace(uid.String(), "-", "", -1) + "-" + multForm.File["file"][0].Filename
-		file, err := multForm.File["file"][0].Open()
+		filename := strings.Replace(uid.String(), "-", "", -1) + "-" + multiPartForm.File["file"][0].Filename
+		file, err := multiPartForm.File["file"][0].Open()
 
 		if err != nil {
 			ctx.SetStatusCode(400)
@@ -72,7 +74,7 @@ func SecretSubmit(ctx *fasthttp.RequestCtx) {
 			ctx.SetBody(returnError("Το αρχείο δεν ήταν έγκυρη εικόνα!"))
 			return
 		}
-		ioutil.WriteFile(ImageDirectory + filename, bytes, 0755)
+		ioutil.WriteFile(ImageDirectory+filename, bytes, 0755)
 		imageId = filename
 	}
 
@@ -88,8 +90,10 @@ func SecretSubmit(ctx *fasthttp.RequestCtx) {
 
 	var options = make(map[string]string)
 	for k, v := range carrier.Form.OptionSets {
-		input, has1 := formData.Options["option-" + k]; has1 = has1 && len(input) > 0
-		customInput, has2 := formData.Options["option-" + k + "-custom"]; has2 = has2 && len(customInput) > 0
+		input, has1 := formData.Options["option-"+k]
+		has1 = has1 && len(input) > 0
+		customInput, has2 := formData.Options["option-"+k+"-custom"]
+		has2 = has2 && len(customInput) > 0
 
 		if has1 || has2 {
 			if input == "custom" && v.AllowCustom {
@@ -119,12 +123,13 @@ func SecretSubmit(ctx *fasthttp.RequestCtx) {
 	}
 	database.SaveSecret(secret)
 
-	ctx.Write(func() []byte{
+	ctx.Write(func() []byte {
 		js, _ := json.Marshal(struct {
 			Id string `json:"id"`
 		}{
 			Id: id,
-		}); return js
+		})
+		return js
 	}())
 }
 
@@ -140,9 +145,9 @@ func ConstructSourceData(ctx *fasthttp.RequestCtx) model.SecretSourceData {
 	return model.SecretSourceData{
 		Timestamp: time.Now(),
 		IpAddress: ip,
-		Country: country,
-		Hostname: strings.Trim(hostname, "."),
-		RayID: string(ctx.Request.Header.Peek("CF-RAY")),
+		Country:   country,
+		Hostname:  strings.Trim(hostname, "."),
+		RayID:     string(ctx.Request.Header.Peek("CF-RAY")),
 	}
 }
 
@@ -151,7 +156,8 @@ func returnError(error string) []byte {
 		Error string `json:"error"`
 	}{
 		Error: error,
-	}); return js
+	})
+	return js
 	return js
 }
 

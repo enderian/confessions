@@ -1,9 +1,9 @@
 package database
 
 import (
-	"gopkg.in/mgo.v2"
 	"errors"
 	"github.com/enderian/confessions/model"
+	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -25,11 +25,11 @@ func FindSecret(id string) (model.Secret, error) {
 	}
 }
 
-func FindSecrets(query DocumentWrapper) (*mgo.Query) {
+func FindSecrets(query DocumentWrapper) *mgo.Query {
 	return secretCollection.Find(query)
 }
 
-func FindArchivedSecrets(query DocumentWrapper) (*mgo.Query) {
+func FindArchivedSecrets(query DocumentWrapper) *mgo.Query {
 	return secretArchiveCollection.Find(query)
 }
 

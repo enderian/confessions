@@ -1,48 +1,98 @@
 package form
 
 import (
-	"github.com/enderian/confessions/model"
-	"github.com/valyala/fasthttp"
-	"io/ioutil"
-	"github.com/tyler-sommer/stick"
+	"encoding/json"
 	"github.com/enderian/confessions/database"
+	"github.com/valyala/fasthttp"
+	"strings"
+	"github.com/enderian/confessions/model"
 )
 
 func StatusRead(ctx *fasthttp.RequestCtx) {
 
-	request := ctx.Request.PostArgs()
-	secret, err := database.FindSecret(string(request.Peek("id")))
-	if err != nil || string(request.Peek("carrier")) != secret.Carrier {
-		StatusRender(ctx, model.Secret{})
+	carrierId := string(ctx.Path())[1: strings.Index(string(ctx.Path())[1:], "/") + 1]
+	secret, err := database.FindSecret(ctx.UserValue("id").(string))
+	if err != nil || carrierId != secret.Carrier {
+		err, _ := json.Marshal(struct {
+			Error string `json:"error"`
+		}{
+			Error: "Δεν βρέθηκε τέτοιο μυστικό.",
+		})
+		ctx.SetBody(err)
+		ctx.SetStatusCode(404)
 		return
 	}
-	if string(request.Peek("action")) == "delete" {
+
+	carrier, err := database.FindCarrier(carrierId)
+	statusProcess(secret, carrier, ctx)
+}
+
+func StatusPatch(ctx *fasthttp.RequestCtx) {
+	carrierId := string(ctx.Path())[1: strings.Index(string(ctx.Path())[1:], "/") + 1]
+	secret, err := database.FindSecret(ctx.UserValue("id").(string))
+	if err != nil || carrierId != secret.Carrier {
+		err, _ := json.Marshal(struct {
+			Error string `json:"error"`
+		}{
+			Error: "Δεν βρέθηκε τέτοιο μυστικό.",
+		})
+		ctx.SetBody(err)
+		ctx.SetStatusCode(404)
+		return
+	}
+
+	patch := struct {
+		Action string `json:"action"`
+	}{}
+	json.Unmarshal(ctx.PostBody(), &patch)
+
+	if patch.Action == "delete" && secret.Status == model.SENT {
 		secret.Status = model.DELETED
 	}
+
+	carrier, err := database.FindCarrier(carrierId)
+	statusProcess(secret, carrier, ctx)
+}
+
+func statusProcess(secret model.Secret, carrier model.Carrier, ctx *fasthttp.RequestCtx) {
 
 	secret.ChecksData = append(secret.ChecksData, ConstructSourceData(ctx))
 	database.SaveSecret(secret)
 
-	StatusRender(ctx, secret)
-}
+	content := secret.OriginalContent
+	publishUrl := ""
+	status := 0
+	deletable := false
 
-func StatusRender(ctx *fasthttp.RequestCtx, secret model.Secret)  {
-	env := stick.New(nil)
-	file, _ := ioutil.ReadFile("./templates/form_status.twig")
-	ctx.SetContentType("text/html")
-
-	published := ""
 	if secret.Status == model.PUBLISHED {
-		carrier, err := database.FindCarrier(secret.Carrier)
-		if err == nil {
-			published = "https://www.facebook.com/" + carrier.FacebookPage + "/posts/" + secret.PublishData.FacebookPostId
-		}
+		status = 1
+		publishUrl = "https://www.facebook.com/" + carrier.FacebookPage + "/posts/" + secret.PublishData.FacebookPostId
+	}
+	if secret.Status == model.DELETED {
+		status = 2
+	}
+	if secret.Status == model.SENT {
+		deletable = true
+	}
+	if content == "" {
+		content = secret.Content
 	}
 
-	values := map[string]stick.Value{
-		"secret": secret,
-		"deletable": secret.Status == model.SENT,
-		"published": published,
-	}
-	env.Execute(string(file), ctx, values)
+	ctx.Response.Header.Add("Content-Type", "application/json")
+	bytes, _ := json.Marshal(struct {
+		Id string `json:"id"`
+		Content string `json:"content"`
+		ContainsImage bool `json:"containsImage"`
+		PublishUrl string `json:"publishUrl,omitempty"`
+		Status int `json:"status"`
+		Deletable bool `json:"deletable"`
+	}{
+		Id: secret.Id,
+		Content: content,
+		ContainsImage: secret.ImageId != "",
+		PublishUrl: publishUrl,
+		Status: status,
+		Deletable: deletable,
+	})
+	ctx.SetBody(bytes)
 }

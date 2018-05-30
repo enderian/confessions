@@ -15,13 +15,19 @@
 </head>
 <body>
 {{template "content" .}}
+<div id="cookieAlert" style="display: none" class="alert alert-primary alert-dismissible alert-bottom mb-0 rounded-0 show" role="alert">
+    Το confessions χρησιμοποιεί cookies με σκοπό την συνεχή βελτιώση των υπηρεσιών του.
+    Δείτε την πολιτική απορρήτου μας <a href="/privacy" target="_blank">εδώ</a>.
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+         <span aria-hidden="true">&times;</span>
+    </button>
+</div>
 <script src="bundle.js"></script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-106872848-1"></script>
 <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'UA-106872848-1', { 'anonymize_ip': true });
 </script>
 </body>

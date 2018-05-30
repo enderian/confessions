@@ -1,18 +1,20 @@
 package form
 
 import (
+	"github.com/enderian/confessions/database"
 	"github.com/enderian/confessions/model"
+	"github.com/lucasb-eyer/go-colorful"
 	"github.com/valyala/fasthttp"
 	"html/template"
-	"github.com/lucasb-eyer/go-colorful"
 	"strconv"
-	"github.com/enderian/confessions/database"
 )
 
 var ImageDirectory string
+var ServiceAlert string
+
 var formTemplate *template.Template
 
-func CarrierForm(ctx *fasthttp.RequestCtx)  {
+func CarrierForm(ctx *fasthttp.RequestCtx) {
 	path := string(ctx.Path())[1:]
 	carrier, err := database.FindCarrier(path)
 	if err != nil {
@@ -36,9 +38,10 @@ func SetupForm() {
 	}
 }
 
-func RenderForm(ctx *fasthttp.RequestCtx, carrier model.Carrier, error string, success interface{})  {
+func RenderForm(ctx *fasthttp.RequestCtx, carrier model.Carrier, error string, success interface{}) {
 
 	barColor := ""
+	recaptchaKey := ""
 	customStyle := "body{ background: url('" + carrier.Form.BackgroundUrl + "') center; " +
 		"background-size: cover; background-repeat: no-repeat; } " +
 		".jumbotron {color: " + carrier.Form.TitleColor + ";} "
@@ -48,24 +51,28 @@ func RenderForm(ctx *fasthttp.RequestCtx, carrier model.Carrier, error string, s
 		c, err := colorful.Hex(carrier.Form.AccentColor)
 		if err == nil {
 			customStyle += ".form-jumbotron {background: rgba(" +
-				strconv.Itoa(int(c.R * 255)) + "," +
-				strconv.Itoa(int(c.G * 255)) + "," +
-				strconv.Itoa(int(c.B * 255)) + "," +
+				strconv.Itoa(int(c.R*255)) + "," +
+				strconv.Itoa(int(c.G*255)) + "," +
+				strconv.Itoa(int(c.B*255)) + "," +
 				" 0.60) !important;}"
 		}
 	}
 	if carrier.Form.CustomCss != "" {
 		customStyle += carrier.Form.CustomCss
 	}
+	if carrier.Form.IsEnableCaptcha {
+		recaptchaKey = ReCaptchaSiteKey
+	}
 
 	ctx.SetContentType("text/html")
 	if err := formTemplate.Execute(ctx, map[string]interface{}{
-		"Carrier": carrier,
-		"Title": carrier.Name,
-		"BarColor": barColor,
-		"Icon": "https://graph.facebook.com/" + carrier.FacebookPage + "/picture?type=square",
-		"RecaptchaKey": ReCaptchaSiteKey,
-		"CustomStyle": template.CSS(customStyle),
+		"Title":        carrier.Name,
+		"Carrier":      carrier,
+		"BarColor":     barColor,
+		"RecaptchaKey": recaptchaKey,
+		"Icon":         "https://graph.facebook.com/" + carrier.FacebookPage + "/picture?type=square",
+		"ServiceAlert":	template.HTML(ServiceAlert),
+		"CustomStyle":  template.CSS(customStyle),
 	}); err != nil {
 		panic(err)
 	}

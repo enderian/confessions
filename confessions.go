@@ -1,30 +1,32 @@
 package main
 
 import (
-	"io/ioutil"
 	"encoding/json"
-	"time"
+	"github.com/buaazp/fasthttprouter"
+	"github.com/enderian/confessions/database"
+	"github.com/enderian/confessions/form"
+	"github.com/enderian/confessions/index"
+	"github.com/valyala/fasthttp"
+	"io"
+	"io/ioutil"
 	"log"
 	"os"
-	"io"
-	"github.com/enderian/confessions/form"
-	"github.com/valyala/fasthttp"
-	"github.com/buaazp/fasthttprouter"
-	"github.com/enderian/confessions/index"
-	"github.com/enderian/confessions/database"
+	"time"
 )
 
 type Configuration struct {
-	Port string `json:"port"`
+	Port              string `json:"port"`
 	ConfessionsImages string `json:"confessions_images"`
 
-	ReCaptchaSiteKey string `json:"recaptcha_key"`
+	ReCaptchaSiteKey    string `json:"recaptcha_key"`
 	ReCaptchaSiteSecret string `json:"recaptcha_secret"`
+
+	ServiceAlert		string `json:"service_alert"`
 }
 
 func main() {
 
-	logFile, err := os.OpenFile("log.txt", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	logFile, err := os.OpenFile("log.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatalf("Error opening log file: %v", err)
 	}
@@ -44,6 +46,7 @@ func main() {
 	database.InitConfessionsDatabase()
 	router := fasthttprouter.New()
 
+	form.ServiceAlert = config.ServiceAlert
 	form.ReCaptchaSiteKey = config.ReCaptchaSiteKey
 	form.ReCaptchaSiteSecret = config.ReCaptchaSiteSecret
 	form.ImageDirectory = config.ConfessionsImages
@@ -52,9 +55,7 @@ func main() {
 	go registerCarriers(router)
 	index.RegisterIndex(router)
 
-	router.POST("/secret", form.StatusRead)
-	router.POST("/submit", form.SecretSubmit)
-    router.GET("/admin", adminHandler)
+	router.GET("/admin", adminHandler)
 
 	router.NotFound = fasthttp.FSHandler("./frontend", 0)
 	start(router, config.Port)
@@ -71,9 +72,15 @@ func registerCarriers(router *fasthttprouter.Router) {
 				}
 			}
 			registered = append(registered, k.Id)
-			router.GET("/" + k.Id, form.CarrierForm)
+
+			router.GET("/"+k.Id, form.CarrierForm)
+			router.POST("/"+k.Id+"/submit", form.SecretSubmit)
+
+			router.GET("/"+k.Id+"/secret/:id", form.StatusRead)
+			router.PATCH("/"+k.Id+"/secret/:id", form.StatusPatch)
+
 			log.Println("Registered " + k.Id + " as an available carrier.")
-			Skip:
+		Skip:
 		}
 
 		time.Sleep(time.Minute * 30)

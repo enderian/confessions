@@ -1,21 +1,21 @@
 package form
 
 import (
+	"encoding/json"
 	"github.com/valyala/fasthttp"
 	"net/url"
-	"encoding/json"
 )
 
 var ReCaptchaSiteKey string
 var ReCaptchaSiteSecret string
 
 type VerifyReCaptchaResponse struct {
-	Success bool `json:"success"`
+	Success    bool     `json:"success"`
 	ErrorCodes []string `json:"error-codes"`
 }
 
 func VerifyReCaptcha(grecaptcharesponse string) bool {
-	client :=&fasthttp.Client{}
+	client := &fasthttp.Client{}
 	request := fasthttp.AcquireRequest()
 	response := fasthttp.AcquireResponse()
 

@@ -1,4 +1,7 @@
 {{define "content"}}
+{{if not (eq .RecaptchaKey "")}}
+<script src="https://www.google.com/recaptcha/api.js?render={{ .RecaptchaKey }}"></script>
+{{end}}
 <div class="jumbotron jumbotron-fluid form-jumbotron text-center p-4 mt-4">
     <div class="container">
         <h3>{{.Carrier.Form.Title}}</h3>
@@ -9,12 +12,11 @@
     <div class="row justify-content-center">
         <div class="ad-card d-none d-xl-block col-12">
             <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- confessions form 1 -->
             <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-format="fluid"
-                 data-ad-layout-key="-gw-3+1f-3d+2z"
+                 style="display:inline-block;width:300px;height:600px"
                  data-ad-client="ca-pub-9120953754980939"
-                 data-ad-slot="6317995603"></ins>
+                 data-ad-slot="2072269466"></ins>
             <script>
                 (adsbygoogle = window.adsbygoogle || []).push({});
             </script>
@@ -32,27 +34,21 @@
                     (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
             </div>
+            {{if not (eq .ServiceAlert "")}}
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-circle"></i> {{.ServiceAlert}}
+            </div>
+            {{end}}
             <div class="card">
                 <div class="card-header">
                     <img class="form-circle-pic mr-1" src="{{.Icon}}">
                     <a href="https://www.facebook.com/{{.Carrier.FacebookPage}}" target="_blank" class="text-dark"><small>{{ .Carrier.Name }}</small></a>
                 </div>
                 <div ng-controller="FormController" class="card-body">
-                    <div ng-show="submitted" class="ng-hide">
-                        <p class="text-center">
-                            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-                                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"></circle>
-                                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"></path>
-                            </svg>
-                        </p>
-                        <div class="text-center"><p class="mt-2">{{ .Carrier.Form.SentMessage }}</p>
-                            <p> Μπορείς να κρατήσεις το παρακάτω αναγνωριστικό και να διαχειριστείς το μυστικό σου πατώντας
-                                το <i class="fas fa-search" aria-hidden="true"></i> δίπλα στο κουμπί {{ .Carrier.Form.SubmitPrompt }}. </p>
-                            <div class="input-group input-group-lg">
-                                <input class="form-control text-center" placeholder="Αναγνωριστικό μυστικού" value="{{"{{submittedId}}"}}" readonly></div>
-                            <p class="mt-4"><a href="#" ng-click="submitted = false">Επιστροφή στη φόρμα</a></p></div>
+                    <div ng-if="submitError" class="alert alert-danger">
+                    {{"{{ submitError }}"}}
                     </div>
-                    <form ng-if="!submitted" ng-submit="submit('{{ .Carrier.Id }}')" method="post">
+                    <form ng-show="screen === 0" ng-submit="submit('{{ .Carrier.Id }}', '{{ .RecaptchaKey }}')" method="post">
                         <div class="form-group">
                             <textarea class="form-control" id="message" rows="3" ng-model="form.content" placeholder="{{.Carrier.Form.SecretPrompt}}" ng-disabled="loading"></textarea>
                         </div>
@@ -93,14 +89,69 @@
                         <div class="text-muted mb-2">
                             <small>Πατώντας <b>{{ .Carrier.Form.SubmitPrompt }}</b>, αποδέχτεστε την <a href="/privacy">πολιτική απορρήτου</a> του confessions και της σελίδας "{{ .Carrier.Name }}", εάν διαθέτει. </small>
                         </div>
-                        <div vc-recaptcha ng-model="form.captcha" size="invisible" key="'{{ .RecaptchaKey }}'" required="true"></div>
                         <button class="btn btn-primary" ng-disabled="loading">
                         {{ .Carrier.Form.SubmitPrompt }}
                         </button>
-                        <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#status_check" disabled>
+                        <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#status_check" ng-click="screen = 2">
                             <i class="fas fa-search" aria-hidden="true"></i>
                         </button>
                     </form>
+                    <div ng-show="screen === 1" class="ng-hide">
+                        <p class="text-center">
+                            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"></circle>
+                                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"></path>
+                            </svg>
+                        </p>
+                        <div class="text-center"><p class="mt-2">{{ .Carrier.Form.SentMessage }}</p>
+                            <p> Μπορείς να κρατήσεις το παρακάτω αναγνωριστικό και να διαχειριστείς το μυστικό σου πατώντας
+                                το <i class="fas fa-search" aria-hidden="true"></i> δίπλα στο κουμπί {{ .Carrier.Form.SubmitPrompt }}. </p>
+                            <div class="input-group input-group-lg">
+                                <input class="form-control text-center" placeholder="Αναγνωριστικό μυστικού" value="{{"{{submittedId}}"}}" readonly></div>
+                            <p class="mt-4"><a href="#" ng-click="screen = 0">Επιστροφή στη φόρμα</a></p></div>
+                    </div>
+                    <div ng-show="screen === 2" class="ng-hide">
+                        <form ng-submit="statusLookup('{{ .Carrier.Id }}')">
+                            <div class="input-group">
+                                <input type="text"
+                                       class="form-control"
+                                       placeholder="Αναγνωριστικό μυστικού"
+                                       ng-model="lookupSettings.id"
+                                       ng-class="{'is-invalid': statusError}" required>
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary rounded-right" type="submit"><i class="fas fa-search"></i></button>
+                                </div>
+                                <div class="invalid-feedback">
+                                {{"{{ statusError }}"}}
+                                </div>
+                            </div>
+                        </form>
+                        <div ng-if="statusResult">
+                            <div class="card mt-2">
+                                <div class="card-body p-3">
+                                    <p>Περιεχόμενο: <br />{{"{{ statusResult.content }}"}}</p>
+                                    <p ng-if="statusResult.containsImage" class="mb-0">Έχει εικόνα: <i class="fas fa-check"></i>
+                                    </p>
+                                    <p class="mb-0">Κατάσταση:
+                                        <span class="text-success" ng-if="statusResult.status === 1"><i class="fas fa-check"></i> Δημοσιευμένο</span>
+                                        <span class="text-danger"  ng-if="statusResult.status === 0"><i class="fas fa-times"></i> Μη δημοσιευμένο</span>
+                                        <span class="text-danger"  ng-if="statusResult.status === 2"><i class="fas fa-trash-alt"></i> Διεγραμμένο</span>
+                                        <a class="text-primary"
+                                           ng-if="statusResult.publishUrl"
+                                           ng-href="{{"{{ statusResult.publishUrl }}"}}" target="_blank">
+                                            Post στο <i class="fab fa-facebook-square"></i>
+                                        </a>
+                                    </p>
+                                    <p class="mb-0 mt-2" ng-if="statusResult.deletable">
+                                        <a href="#" class="text-danger" ng-click="statusDelete('{{ .Carrier.Id }}')">Διαγραφή μυστικού</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <p class="mt-2 mb-0"><a href="#" ng-click="screen = 0; statusResult = null">Επιστροφή στη φόρμα</a></p>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-footer text-muted">
                     <small><i class="fas fa-copyright" aria-hidden="true"></i> Copyright 2018 - Powered by <a href="/">ender confessions</a></small>

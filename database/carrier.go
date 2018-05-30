@@ -1,11 +1,11 @@
 package database
 
 import (
-	"gopkg.in/mgo.v2"
 	"errors"
-	"log"
 	"github.com/enderian/confessions/model"
+	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"log"
 )
 
 var carrierCollection *mgo.Collection
@@ -46,16 +46,15 @@ func SaveCarrier(carrier model.Carrier) {
 
 func DeleteCarrier(carrier model.Carrier) {
 	go func() {
-		secretCursor := secretCollection.Find(bson.M{"carrier":  carrier.Id}).Iter()
+		secretCursor := secretCollection.Find(bson.M{"carrier": carrier.Id}).Iter()
 		var secret model.Secret
 		for secretCursor.Next(&secret) {
 			secret.Carrier = carrier.Id + "_deleted"
 			secretArchiveCollection.Insert(secret)
 		}
-		secretCollection.RemoveAll(bson.M{"carrier":  carrier.Id})
+		secretCollection.RemoveAll(bson.M{"carrier": carrier.Id})
 	}()
 
 	carrierArchiveCollection.Insert(carrier)
 	carrierCollection.Remove(bson.M{"id": carrier.Id})
 }
-
