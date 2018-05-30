@@ -45,7 +45,7 @@
                     <a href="https://www.facebook.com/{{.Carrier.FacebookPage}}" target="_blank" class="text-dark"><small>{{ .Carrier.Name }}</small></a>
                 </div>
                 <div ng-controller="FormController" class="card-body">
-                    <div ng-if="submitError" class="alert alert-danger">
+                    <div ng-show="submitError" class="ng-hide alert alert-danger">
                     {{"{{ submitError }}"}}
                     </div>
                     <form ng-show="screen === 0" ng-submit="submit('{{ .Carrier.Id }}', '{{ .RecaptchaKey }}')" method="post">
