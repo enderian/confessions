@@ -71,7 +71,7 @@ func RenderForm(ctx *fasthttp.RequestCtx, carrier model.Carrier, error string, s
 		"BarColor":     barColor,
 		"RecaptchaKey": recaptchaKey,
 		"Icon":         "https://graph.facebook.com/" + carrier.FacebookPage + "/picture?type=square",
-		"ServiceAlert":	template.HTML(ServiceAlert),
+		"ServiceAlert": template.HTML(ServiceAlert),
 		"CustomStyle":  template.CSS(customStyle),
 	}); err != nil {
 		panic(err)

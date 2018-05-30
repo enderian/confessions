@@ -3,14 +3,14 @@ package form
 import (
 	"encoding/json"
 	"github.com/enderian/confessions/database"
+	"github.com/enderian/confessions/model"
 	"github.com/valyala/fasthttp"
 	"strings"
-	"github.com/enderian/confessions/model"
 )
 
 func StatusRead(ctx *fasthttp.RequestCtx) {
 
-	carrierId := string(ctx.Path())[1: strings.Index(string(ctx.Path())[1:], "/") + 1]
+	carrierId := string(ctx.Path())[1 : strings.Index(string(ctx.Path())[1:], "/")+1]
 	secret, err := database.FindSecret(ctx.UserValue("id").(string))
 	if err != nil || carrierId != secret.Carrier {
 		err, _ := json.Marshal(struct {
@@ -28,7 +28,7 @@ func StatusRead(ctx *fasthttp.RequestCtx) {
 }
 
 func StatusPatch(ctx *fasthttp.RequestCtx) {
-	carrierId := string(ctx.Path())[1: strings.Index(string(ctx.Path())[1:], "/") + 1]
+	carrierId := string(ctx.Path())[1 : strings.Index(string(ctx.Path())[1:], "/")+1]
 	secret, err := database.FindSecret(ctx.UserValue("id").(string))
 	if err != nil || carrierId != secret.Carrier {
 		err, _ := json.Marshal(struct {
@@ -80,19 +80,19 @@ func statusProcess(secret model.Secret, carrier model.Carrier, ctx *fasthttp.Req
 
 	ctx.Response.Header.Add("Content-Type", "application/json")
 	bytes, _ := json.Marshal(struct {
-		Id string `json:"id"`
-		Content string `json:"content"`
-		ContainsImage bool `json:"containsImage"`
-		PublishUrl string `json:"publishUrl,omitempty"`
-		Status int `json:"status"`
-		Deletable bool `json:"deletable"`
+		Id            string `json:"id"`
+		Content       string `json:"content"`
+		ContainsImage bool   `json:"containsImage"`
+		PublishUrl    string `json:"publishUrl,omitempty"`
+		Status        int    `json:"status"`
+		Deletable     bool   `json:"deletable"`
 	}{
-		Id: secret.Id,
-		Content: content,
+		Id:            secret.Id,
+		Content:       content,
 		ContainsImage: secret.ImageId != "",
-		PublishUrl: publishUrl,
-		Status: status,
-		Deletable: deletable,
+		PublishUrl:    publishUrl,
+		Status:        status,
+		Deletable:     deletable,
 	})
 	ctx.SetBody(bytes)
 }

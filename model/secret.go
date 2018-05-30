@@ -56,6 +56,7 @@ type SecretSourceData struct {
 	Hostname  string    `bson:"hostname" json:"hostname"`
 	Country   string    `bson:"country" json:"country"`
 	RayID     string    `bson:"rayId" json:"rayId"`
+	UserAgent string    `bson:"userAgent" json:"userAgent"`
 }
 
 func (secret *Secret) BuildProperties(carrier *Carrier) {

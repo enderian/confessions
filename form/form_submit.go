@@ -22,7 +22,7 @@ func SecretSubmit(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	carrierId := string(ctx.Path())[1: strings.Index(string(ctx.Path())[1:], "/") + 1]
+	carrierId := string(ctx.Path())[1 : strings.Index(string(ctx.Path())[1:], "/")+1]
 	carrier, err := database.FindCarrier(carrierId)
 	if err != nil {
 		ctx.SetStatusCode(400)
@@ -147,6 +147,7 @@ func ConstructSourceData(ctx *fasthttp.RequestCtx) model.SecretSourceData {
 		IpAddress: ip,
 		Country:   country,
 		Hostname:  strings.Trim(hostname, "."),
+		UserAgent: string(ctx.Request.Header.Peek("User-Agent")),
 		RayID:     string(ctx.Request.Header.Peek("CF-RAY")),
 	}
 }

@@ -21,7 +21,7 @@ type Configuration struct {
 	ReCaptchaSiteKey    string `json:"recaptcha_key"`
 	ReCaptchaSiteSecret string `json:"recaptcha_secret"`
 
-	ServiceAlert		string `json:"service_alert"`
+	ServiceAlert string `json:"service_alert"`
 }
 
 func main() {
