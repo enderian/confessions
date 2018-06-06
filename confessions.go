@@ -18,8 +18,9 @@ type Configuration struct {
 	Port              string `json:"port"`
 	ConfessionsImages string `json:"confessions_images"`
 
-	ReCaptchaSiteKey    string `json:"recaptcha_key"`
-	ReCaptchaSiteSecret string `json:"recaptcha_secret"`
+	S3Configuration     form.S3Configuration `json:"s3_configuration"`
+	ReCaptchaSiteKey    string               `json:"recaptcha_key"`
+	ReCaptchaSiteSecret string               `json:"recaptcha_secret"`
 
 	ServiceAlert string `json:"service_alert"`
 }
@@ -49,8 +50,9 @@ func main() {
 	form.ServiceAlert = config.ServiceAlert
 	form.ReCaptchaSiteKey = config.ReCaptchaSiteKey
 	form.ReCaptchaSiteSecret = config.ReCaptchaSiteSecret
-	form.ImageDirectory = config.ConfessionsImages
+	form.S3Config = config.S3Configuration
 	form.SetupForm()
+	form.SetupS3()
 
 	go registerCarriers(router)
 	index.RegisterIndex(router)

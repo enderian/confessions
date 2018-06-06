@@ -1,13 +1,18 @@
 package form
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/enderian/confessions/database"
 	"github.com/enderian/confessions/model"
 	"github.com/google/uuid"
 	"github.com/valyala/fasthttp"
 	"gopkg.in/h2non/filetype.v1"
 	"io/ioutil"
+	"log"
 	"net"
 	"strings"
 	"time"
@@ -46,6 +51,10 @@ func SecretSubmit(ctx *fasthttp.RequestCtx) {
 		}
 	}
 
+	uid, err := uuid.NewRandom()
+	idRunes := []rune(strings.Replace(uid.String(), "-", "", -1))
+	id := string(idRunes[0:12])
+
 	hasContent := formData.Content != ""
 	hasImage := len(multiPartForm.File["file"]) > 0 && multiPartForm.File["file"] != nil
 
@@ -56,10 +65,9 @@ func SecretSubmit(ctx *fasthttp.RequestCtx) {
 	}
 
 	imageId := ""
+
 	if hasImage {
 
-		uid, err := uuid.NewRandom()
-		filename := strings.Replace(uid.String(), "-", "", -1) + "-" + multiPartForm.File["file"][0].Filename
 		file, err := multiPartForm.File["file"][0].Open()
 
 		if err != nil {
@@ -68,19 +76,32 @@ func SecretSubmit(ctx *fasthttp.RequestCtx) {
 			return
 		}
 
-		bytes, err := ioutil.ReadAll(file)
-		if !filetype.IsImage(bytes) {
+		bits, err := ioutil.ReadAll(file)
+		typ, err := filetype.Image(bits)
+		if typ == filetype.Unknown {
 			ctx.SetStatusCode(400)
 			ctx.SetBody(returnError("Το αρχείο δεν ήταν έγκυρη εικόνα!"))
 			return
 		}
-		ioutil.WriteFile(ImageDirectory+filename, bytes, 0755)
-		imageId = filename
+
+		key := fmt.Sprintf("%s.%s", uuid.Must(uuid.NewRandom()).String(), typ.Extension)
+		result, err := s3uploader.Upload(&s3manager.UploadInput{
+			ACL:  aws.String("public-read"),
+			Key:  aws.String(key),
+			Body: bytes.NewReader(bits),
+			Metadata: map[string]*string{
+				"Attached-Secret": aws.String(id),
+			},
+			ContentType: aws.String(typ.MIME.Value),
+		})
+
+		if err == nil {
+			imageId = result.Location
+		} else {
+			log.Printf("Error while uploading image to S3: %s\n", err.Error())
+		}
 	}
 
-	uid, err := uuid.NewRandom()
-	idRunes := []rune(strings.Replace(uid.String(), "-", "", -1))
-	id := string(idRunes[0:12])
 	source := ConstructSourceData(ctx)
 
 	content := ""
