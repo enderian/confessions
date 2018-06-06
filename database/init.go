@@ -4,8 +4,10 @@ import (
 	"gopkg.in/mgo.v2"
 )
 
+var Address string
+
 func InitConfessionsDatabase() {
-	session, err := mgo.Dial("localhost")
+	session, err := mgo.Dial(Address)
 	if err != nil {
 		panic(err)
 	}

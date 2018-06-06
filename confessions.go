@@ -27,6 +27,7 @@ func main() {
 		log.Fatalf("Fail to read configuration file: %v", err)
 	}
 
+	database.Address = cfg.Section("database").Key("address").MustString("localhost")
 	database.InitConfessionsDatabase()
 	router := fasthttprouter.New()
 

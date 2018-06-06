@@ -2,16 +2,33 @@
 
 
 [[projects]]
+  name = "github.com/aws/aws-sdk-go"
+  packages = ["aws","aws/awserr","aws/awsutil","aws/client","aws/client/metadata","aws/corehandlers","aws/credentials","aws/credentials/ec2rolecreds","aws/credentials/endpointcreds","aws/credentials/stscreds","aws/csm","aws/defaults","aws/ec2metadata","aws/endpoints","aws/request","aws/session","aws/signer/v4","internal/sdkio","internal/sdkrand","internal/shareddefaults","private/protocol","private/protocol/eventstream","private/protocol/eventstream/eventstreamapi","private/protocol/query","private/protocol/query/queryutil","private/protocol/rest","private/protocol/restxml","private/protocol/xml/xmlutil","service/s3","service/s3/s3iface","service/s3/s3manager","service/sts"]
+  revision = "47309c012812d9e9c488a54313e5cdfa7479df93"
+  version = "v1.14.1"
+
+[[projects]]
   name = "github.com/buaazp/fasthttprouter"
   packages = ["."]
   revision = "ade4e2031af3aed7fffd241084aad80a58faf421"
   version = "v0.1.1"
 
 [[projects]]
+  name = "github.com/go-ini/ini"
+  packages = ["."]
+  revision = "06f5f3d67269ccec1fe5fe4134ba6e982984f7f5"
+  version = "v1.37.0"
+
+[[projects]]
   name = "github.com/google/uuid"
   packages = ["."]
   revision = "064e2069ce9c359c118179501254f67d7d37ba24"
   version = "0.2"
+
+[[projects]]
+  name = "github.com/jmespath/go-jmespath"
+  packages = ["."]
+  revision = "0b12d6b5"
 
 [[projects]]
   name = "github.com/klauspost/compress"
@@ -38,18 +55,6 @@
   version = "v1.0"
 
 [[projects]]
-  name = "github.com/shopspring/decimal"
-  packages = ["."]
-  revision = "69b3a8ad1f5f2c8bd855cb6506d18593064a346b"
-  version = "1.0.1"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/tyler-sommer/stick"
-  packages = [".","parse"]
-  revision = "05634229ddd17c5a0244788fbdb9995729bb42b0"
-
-[[projects]]
   name = "github.com/valyala/fasthttp"
   packages = [".","fasthttputil"]
   revision = "d42167fd04f636e20b005e9934159e95454233c7"
@@ -62,6 +67,12 @@
   version = "v1.0.5"
 
 [[projects]]
+  name = "gopkg.in/ini.v1"
+  packages = ["."]
+  revision = "06f5f3d67269ccec1fe5fe4134ba6e982984f7f5"
+  version = "v1.37.0"
+
+[[projects]]
   branch = "v2"
   name = "gopkg.in/mgo.v2"
   packages = [".","bson","internal/json","internal/sasl","internal/scram"]
@@ -70,6 +81,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "7e34afd53da938bf75d54e9e541f32b3b26c9152749e373d0003c322284bce89"
+  inputs-digest = "79032a5af0e1b03f379bb834923c0c73c912ce78eaf98ada37edc6579b0af89c"
   solver-name = "gps-cdcl"
   solver-version = 1
