@@ -1,56 +1,38 @@
 package main
 
 import (
-	"encoding/json"
 	"github.com/buaazp/fasthttprouter"
 	"github.com/enderian/confessions/database"
 	"github.com/enderian/confessions/form"
 	"github.com/enderian/confessions/index"
 	"github.com/valyala/fasthttp"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"time"
+	"gopkg.in/ini.v1"
 )
-
-type Configuration struct {
-	Port              string `json:"port"`
-	ConfessionsImages string `json:"confessions_images"`
-
-	S3Configuration     form.S3Configuration `json:"s3_configuration"`
-	ReCaptchaSiteKey    string               `json:"recaptcha_key"`
-	ReCaptchaSiteSecret string               `json:"recaptcha_secret"`
-
-	ServiceAlert string `json:"service_alert"`
-}
 
 func main() {
 
-	logFile, err := os.OpenFile("log.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	logFile, err := os.OpenFile("confessions.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatalf("Error opening log file: %v", err)
 	}
 	mw := io.MultiWriter(os.Stdout, logFile)
 	log.SetOutput(mw)
 
-	config := Configuration{}
-	configFile, err := ioutil.ReadFile("config.json")
+	cfg, err := ini.Load("config.ini")
 	if err != nil {
-		log.Fatalf("Unable to open configuration file config.json: %s\n", err.Error())
-	}
-	err = json.Unmarshal(configFile, &config)
-	if err != nil {
-		log.Fatalf("Unable to open configuration file config.json: %s\n", err.Error())
+		log.Fatalf("Fail to read configuration file: %v", err)
 	}
 
 	database.InitConfessionsDatabase()
 	router := fasthttprouter.New()
 
-	form.ServiceAlert = config.ServiceAlert
-	form.ReCaptchaSiteKey = config.ReCaptchaSiteKey
-	form.ReCaptchaSiteSecret = config.ReCaptchaSiteSecret
-	form.S3Config = config.S3Configuration
+	form.ServiceAlert = cfg.Section("").Key("service_alert").MustString("")
+	form.ReCaptchaSiteKey = cfg.Section("recaptcha").Key("key").String()
+	form.ReCaptchaSiteSecret = cfg.Section("recaptcha").Key("secret").String()
 	form.SetupForm()
 	form.SetupS3()
 
@@ -60,7 +42,7 @@ func main() {
 	router.GET("/admin", adminHandler)
 
 	router.NotFound = fasthttp.FSHandler("./frontend", 0)
-	start(router, config.Port)
+	start(router, cfg.Section("").Key("port").MustString(":8080"))
 }
 
 func registerCarriers(router *fasthttprouter.Router) {
