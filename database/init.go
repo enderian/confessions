@@ -10,7 +10,7 @@ var (
 	Address  string
 )
 
-func InitConfessionsDatabase() {
+func Init() {
 	session, err := mgo.Dial(Address)
 	if err != nil {
 		panic(err)
@@ -24,7 +24,10 @@ func InitConfessionsDatabase() {
 		}
 	}
 	session.SetMode(mgo.Monotonic, true)
+	InitConfessionsDatabase(session)
+}
 
+func InitConfessionsDatabase(session *mgo.Session)  {
 	carrierCollection = session.DB("ender-confessions").C("Carrier")
 	secretCollection = session.DB("ender-confessions").C("Secret")
 	secretArchiveCollection = session.DB("ender-confessions").C("SecretArchive")

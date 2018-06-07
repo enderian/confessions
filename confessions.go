@@ -30,7 +30,7 @@ func main() {
 	database.Address = cfg.Section("database").Key("address").MustString("localhost")
 	database.Username = cfg.Section("database").Key("username").MustString("")
 	database.Password = cfg.Section("database").Key("password").MustString("")
-	database.InitConfessionsDatabase()
+	database.Init()
 	router := fasthttprouter.New()
 
 	form.ServiceAlert = cfg.Section("").Key("service_alert").MustString("")
