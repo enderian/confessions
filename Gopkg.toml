@@ -34,10 +34,6 @@
   version = "1.0.0"
 
 [[constraint]]
-  branch = "master"
-  name = "github.com/tyler-sommer/stick"
-
-[[constraint]]
   name = "github.com/valyala/fasthttp"
   version = "20160617.0.0"
 

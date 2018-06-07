@@ -86,6 +86,7 @@ func SecretSubmit(ctx *fasthttp.RequestCtx) {
 
 		key := fmt.Sprintf("%s.%s", uuid.Must(uuid.NewRandom()).String(), typ.Extension)
 		result, err := s3uploader.Upload(&s3manager.UploadInput{
+			Bucket: aws.String("confessions-images"),
 			ACL:  aws.String("public-read"),
 			Key:  aws.String(key),
 			Body: bytes.NewReader(bits),
