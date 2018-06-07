@@ -4,12 +4,18 @@ import (
 	"gopkg.in/mgo.v2"
 )
 
-var Address string
+var Address, Username, Password string
 
 func InitConfessionsDatabase() {
 	session, err := mgo.Dial(Address)
 	if err != nil {
 		panic(err)
+	}
+	if Username != "" {
+		session.Login(&mgo.Credential{
+			Username: Username,
+			Password: Password,
+		})
 	}
 	session.SetMode(mgo.Monotonic, true)
 
