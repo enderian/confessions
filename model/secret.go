@@ -60,6 +60,12 @@ type SecretSourceData struct {
 }
 
 func (secret *Secret) BuildProperties(carrier *Carrier) {
+	if carrier.EffectiveHashtag == "" {
+	    secret.Content = strings.Trim(secret.Content, " \t\n")
+	    secret.FinalForm = strings.Trim(secret.Content, " \t\n")
+	    return
+	}
+	
 	secret.Properties = carrier.EffectiveFormat
 
 	for k, v := range secret.Options {
